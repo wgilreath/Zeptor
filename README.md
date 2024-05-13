@@ -18,3 +18,21 @@ The directories in the repository for Zeptor are:
 * zip - ZIP archive of source code updates contains source and directory structure.
 
 As bugs, defects, and glitches are found I will update when I can do so. 🤨 In the meanwhile, I can and will add my own to Zeptor. 🤪
+
+## ZeptoN 
+Zeptor is a code editor for the ZeptoN programming language. The "raw" transcompiler or transpiler is in this GitHub repository https://github.com/wgilreath/ZeptoN although Zeptor has the ZeptoN transpiler integrated into the tool. 🙃
+
+For more information about ZeptoN, visit my home site https://www.wfgilreath.xyz. Here is the white papers about the ZeptoN programming language in ePub/PDF formats. 
+
+* ePub (5.7Mb) https://wgilreath.github.io/ZeptonWhitePaper.epub
+* PDF (5.7Mb) https://wgilreath.github.io/ZeptonWhitePaper.pdf
+  
+
+The white paper gives greater depth into the features, properties, and goals of ZeptoN. The license for the white paper is Creative Commons Attribution-ShareAlike 4.0 International; so download, read, ponder, and reshare ad nauseam! 😉
+
+
+
+
+
+
+
