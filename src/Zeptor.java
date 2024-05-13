@@ -1735,7 +1735,7 @@ public final class Zeptor extends MyJFrame implements OpenFileListener, Containe
 
             chooser.setCurrentDirectory(new File(outputPath));
 
-            MyFileFilter filter = new MyFileFilter(".zep", "ZeptoN Files [.zep]");
+            MyFileFilter filter = new MyFileFilter(".zept", "ZeptoN Files [.zept]");
             chooser.addChoosableFileFilter(filter);
             chooser.setDialogType(JFileChooser.OPEN_DIALOG);
             chooser.setMultiSelectionEnabled(true);

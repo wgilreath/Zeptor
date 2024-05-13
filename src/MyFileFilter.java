@@ -87,7 +87,7 @@ public class MyFileFilter extends FileFilter {
 
         if (file.isDirectory()) {
             return true;
-        } else if (file.getName().toLowerCase().endsWith(".zep")) {
+        } else if (file.getName().toLowerCase().endsWith(".zept")) {
             return true;
         }
 
