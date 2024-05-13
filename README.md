@@ -14,6 +14,7 @@ The directories in the repository for Zeptor are:
 
 * assets - Java JAR for specific minimum JDK to run Zeptor immediately.
 * lib - Java JAR libraries utilized with Zeptor (13-files).
+* screenshots - screenshot images of Zeptor in operation (14-files).
 * src - Java source code for Zeptor (34-files) but files only not directory heirarchy.
 * zip - ZIP archive of source code updates contains source and directory structure.
 
