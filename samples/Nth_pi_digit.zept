@@ -1,0 +1,208 @@
+/*
+  Name: Nth_pi_digit.zept
+
+  Description: This ZeptoN program computes and prints the Nth digit of pi. 
+  
+    Computation of the n'th decimal digit of pi with very little memory.
+  
+    We use a slightly modified version of the method described by Simon
+    Plouffe in "On the Computation of the n'th decimal digit of various
+    transcendental numbers" (November 1996). We have modified the algorithm
+    to get a running time of O(n^2) instead of O(n^3log(n)^3).
+ 
+    This program uses mostly integer arithmetic. It may be slow on some
+    hardwares where integer multiplications and divisons must be done
+    by software. 
+
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+ */
+package xyz.zepton.samples;
+
+prog Nth_pi_digit {
+
+  static double fmod(double x, double y) {
+    return x % y;
+  }//end fmod
+
+  static long mul_mod(long a, long b, long m) {
+    return (a * b) % m;
+  }//end mul_mod
+
+  // return the inverse of x mod y 
+  static long inv_mod(long x, long y) {
+    
+    long q, u, v, a, c, t;
+
+    u = x;
+    v = y;
+    c = 1;
+    a = 0;
+    do {
+      q = v / u;
+
+      t = c;
+      c = a - q * c;
+      a = t;
+
+      t = u;
+      u = v - q * u;
+      v = t;
+    } while (u != 0);
+    
+    a = a % y;
+    
+    if (a < 0) {
+      a = y + a;
+    }//end if
+    
+    return a;
+    
+  }//end inv_mod
+
+  // return (a^b) mod m
+  static long pow_mod(long a, long b, long m) {
+    
+    long r, aa;
+
+    r = 1;
+    aa = a;
+    
+    while (true) {
+      if ((b & 1) == 1) {
+        r = (int) mul_mod(r, aa, m);
+      }//end if
+      
+      b = b >> 1;
+      
+      if (b == 0) {
+        break;
+      }//end if
+      aa = (int) mul_mod(aa, aa, m);
+    }//end while
+    
+    return r;
+  }//end pow_mod
+
+  // return true if n is prime 
+  static boolean is_prime(long n) {
+    
+    long r, i;
+    if ((n % 2) == 0) {
+      return false;
+    }//end if
+
+    r = (int) (Math.sqrt(n));
+    for (i = 3; i <= r; i += 2) {
+      if ((n % i) == 0) {
+        return false;
+      }//end if
+    }//end for
+    
+    return true;
+    
+  }//end is_prime
+
+  // return the prime number immediatly after n
+  static long next_prime(long n) {
+    
+    do {
+      n++;
+    } while (!is_prime(n));
+    
+    return n;
+    
+  }//end next_prime
+
+  begin {
+
+    String[] args = getArgs();
+
+    long av, a, vmax, N, n = 0, num, den, k, kq, kq2, t, v, s, i;
+    double sum;
+
+    if (args.length < 1 || (n = Integer.parseInt(args[0])) <= 0) {
+      printf("This program computes the n'th decimal digit of pi%nUsage: pi n , where n is the digit you want\n");
+      exit(1);
+    }//end if
+
+    N = (long) ((n + 20) * Math.log(10) / Math.log(2));
+
+    sum = 0;
+
+    for (a = 3; a <= (2 * N); a = next_prime(a)) {
+
+      vmax = (int) (Math.log(2 * N) / Math.log(a));
+      av = 1;
+      for (i = 0; i < vmax; i++) {
+        av = av * a;
+      }//end for
+
+      s = 0;
+      num = 1;
+      den = 1;
+      v = 0;
+      kq = 1;
+      kq2 = 1;
+
+      for (k = 1; k <= N; k++) {
+
+        t = k;
+        if (kq >= a) {
+          do {
+            t = t / a;
+            v--;
+          } while ((t % a) == 0);
+          kq = 0;
+        }//end if
+        kq++;
+        num = (int) mul_mod(num, t, av);
+
+        t = (2 * k - 1);
+        if (kq2 >= a) {
+          if (kq2 == a) {
+            do {
+              t = t / a;
+              v++;
+            } while ((t % a) == 0);
+          }//end if
+          kq2 -= a;
+        }//end if
+        den = (int) mul_mod(den, t, av);
+        kq2 += 2;
+
+        if (v > 0) {
+          t = inv_mod(den, av);
+          t = (int) mul_mod(t, num, av);
+          t = (int) mul_mod(t, k, av);
+          for (i = v; i < vmax; i++) {
+            t = (int) mul_mod(t, a, av);
+          }//end for
+          s += t;
+          if (s >= av) {
+            s -= av;
+          }//end if
+          
+        }//end if
+
+      }//end for
+
+      t = pow_mod(10, n - 1, av);
+      s = (int) mul_mod(s, t, av);
+      sum = fmod(sum + (double) s / (double) av, 1.0);
+    }//end for
+
+    printf("Decimal digits of pi at position %d: %09d%n", n, (long) (sum * 1e9));
+
+    exit(0);
+
+  }//end begin
+
+}//end prog Nth_pi_digit

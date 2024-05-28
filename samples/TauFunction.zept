@@ -1,0 +1,72 @@
+/*
+  
+  Name: TauFunction.zept
+
+  Description: The program implements the Tau mathematical function; 
+               for a given a positive integer number, then count the 
+               number of its positive integer number divisors.
+
+
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog TauFunction {
+
+  static long tau(long n) {
+
+    long total = 1;
+
+    // Deal with powers of 2 first
+    for (; (n & 1) == 0; n >>= 1) {
+      ++total;
+    }//end for
+
+    // Odd prime factors up to the square root
+    for (long p = 3; p * p <= n; p += 2) {
+
+      long count = 1;
+      for (; n % p == 0; n /= p) {
+        ++count;
+      }//end for
+      total *= count;
+    }//end for
+
+    // If n > 1 then it's prime
+    if (n > 1) {
+      total *= 2;
+    }//end if
+
+    return total;
+
+  }//end tau
+
+  begin {
+
+    final int limit = 10;
+
+    printf("%nCount of divisors for the first %d positive integers:%n%n", limit);
+    for (long n = 1; n <= limit; ++n) {
+      printf("%3d", tau(n));
+
+      if (n % 20 == 0) { //20 integer numbers per line
+        println();
+      }//end if
+
+    }//end for
+    println();
+
+    exit(0);
+
+  }//end begin
+
+}//end prog TauFunction

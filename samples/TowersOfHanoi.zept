@@ -1,0 +1,52 @@
+/*
+
+  Name: TowersOfHanoi.zept
+
+  Description: The towers of Hanoi a classic recursive game and puzzle.
+  
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog TowersOfHanoi {
+
+  int disks = -1;
+
+  void hanoi(char src, char tmp, char dst, int n) {
+
+    if (n > 0) {
+      this.hanoi(src, tmp, dst, n - 1);
+      printf("  Move disk %d from peg %c to peg %c. %n", n, src, dst);
+      this.hanoi(tmp, src, dst, n - 1);
+    }//end if
+
+  }//end hanoi
+
+  begin {
+
+    print("Enter the number of disks: ");
+
+    me.disks = readInt();
+
+    println();
+    println("Towers of Hanoi Solution: ");
+    println();
+
+    me.hanoi('A', 'B', 'C', me.disks);
+
+    readLine();
+
+    exit(0);
+
+  }//end begin
+
+}//end prog TowersOfHanoi

@@ -1,0 +1,138 @@
+/*  
+
+  Name: ZellerCongruence.zept
+
+  Description: Zeller’s congruence calculates the week day for any Julian or 
+               Gregorian calendar date. 
+
+  Reference:   Zeller, Christian (1886). "Kalender-Formeln," 
+               Acta Mathematica 9: pp. 131–136.
+
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog ZellerCongruence {
+
+  //constants for readability of date in array
+  static final int DAY = 0;
+  static final int MONTH = 1;
+  static final int YEAR = 2;
+
+  static String FindDayForDate(int[] date) {
+    return ZellerCongruence.FindDayForDate(date[ZellerCongruence.DAY], date[ZellerCongruence.MONTH], date[ZellerCongruence.YEAR]);
+  }//end FindDayForDate
+
+  static String FindDayForDate(int day, int month, int year) {
+
+    switch (month) {
+      case 1:
+        month = 13;
+        year--;
+        break;
+      case 2:
+        month = 14;
+        year--;
+        break;
+    }//end switch
+
+    int q = day;
+    int m = month;
+    int k = year % 100;
+    int j = year / 100;
+    int h = q + 13 * (m + 1) / 5 + k + k / 4 + j / 4 + 5 * j;
+
+    int w = h % 7;
+
+    String zellerResult = EMPTY_STRING;
+
+    switch (w) {
+      case 0:
+        zellerResult = DAYS_OF_WEEK[0];
+        break;
+      case 1:
+        zellerResult = DAYS_OF_WEEK[1];
+        break;
+      case 2:
+        zellerResult = DAYS_OF_WEEK[2];
+        break;
+      case 3:
+        zellerResult = DAYS_OF_WEEK[3];
+        break;
+      case 4:
+        zellerResult = DAYS_OF_WEEK[4];
+        break;
+      case 5:
+        zellerResult = DAYS_OF_WEEK[5];
+        break;
+      case 6:
+        zellerResult = DAYS_OF_WEEK[6];
+        break;
+    }//end switch
+
+    return zellerResult;
+
+  }//end FindDayForDate
+
+  final static String[] DAYS_OF_WEEK = {
+    "Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"
+  };
+
+  static String readInputDate() {
+
+    Scanner console = new Scanner(System.in);
+    print("Enter the date in dd/mm/yyyy form: ");
+
+    String[] date = console.nextLine().split("/");
+
+    int q = Integer.parseInt(date[ZellerCongruence.DAY]);
+    int m = Integer.parseInt(date[ZellerCongruence.MONTH]);
+    int y = Integer.parseInt(date[ZellerCongruence.YEAR]);
+
+    if (m < 3) {
+      m += 12;
+      y -= 1;
+    }//end if
+
+    int k = y % 100;
+    int j = y / 100;
+
+    int day = ((q + (((m + 1) * 26) / 10) + k + (k / 4) + (j / 4)) + (5 * j)) % 7;
+
+    return DAYS_OF_WEEK[day];
+
+  }//end readInputDate
+
+  begin {
+
+    try {
+
+      int date[] = {9, 7, 1971}; //dd/mm/yy -- author's birthday July 9, 1971.
+
+      printf("%nWeekday for date of %d-%d-%d is: %s%n%n", date[ZellerCongruence.MONTH],
+              date[ZellerCongruence.DAY],
+              date[ZellerCongruence.YEAR],
+              ZellerCongruence.FindDayForDate(date));
+
+      String dayOfWeek = readInputDate();
+      printf("The day of the week is: %s%n%n", dayOfWeek);
+
+    } catch (Exception ex) {
+      printf("Error: %s%n%n", ex.toString());
+      ex.printStackTrace();
+    }//end try
+
+    exit(0);
+
+  }//end begin
+
+}//end prog ZellerCongruence

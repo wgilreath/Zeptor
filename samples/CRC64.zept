@@ -1,0 +1,105 @@
+/*
+
+  Name: CRC64.zep
+
+  Description: Calculate the Cyclical-Redundancy Check (CRC) 64-bit value from a 
+               given string. 
+
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+
+*/
+
+package xyz.zepton.samples;
+
+prog CRC64 {
+
+    static boolean initFlag = false;
+
+    static final long[]    crc64Table = new long[256];
+    static final long      POLY64_REV = 0x95AC9329AC4BC9B5L;
+    static final long   INITIAL_CRC64 = 0xFFFFFFFFFFFFFFFFL;
+
+    static final long crc64(String in) {
+
+        if (in == null || in.length() == 0) {
+            return 0;
+        }//end if
+
+        long crc64 = INITIAL_CRC64, part;
+
+        if (!initFlag) {
+
+            for (int i = 0; i < 256; i++) {
+                part = i;
+
+                for (int j = 0; j < 8; j++) {
+                    int value = ((int) part & 1);
+                    if (value != 0) {
+                        part = (part >> 1) ^ POLY64_REV;
+                    } else {
+                        part >>= 1;
+                    }//end if
+                }//end for
+
+                crc64Table[i] = part;
+            }//end for
+
+            initFlag = true;
+        }//end if
+
+        int length = in.length();
+
+        for (int k = 0; k < length; ++k) {
+            char c = in.charAt(k);
+            crc64 = crc64Table[(((int) crc64) ^ c) & 0xff] ^ (crc64 >> 8);
+        }//end for
+
+        return crc64;
+
+    }//end crc64
+
+begin {
+
+        String test_sequence1 = "MNIIQGNLVGTGLKIGIVVGRFNDFITSKLLSGAEDALLRHGVDTNDIDVAWVPGAFEIPFAAKKMAETKKYDAIITLGTVIRGATTSYDYVCNEAAKGIAQAANTTGVPVIFGIVTTENIEQAIERAGTKAGNKGVDCAVSAIEMANLNRSFE";
+
+        // Differs from 1st sequence in two places
+        String test_sequence2 = "MNIIQGNLVGTGLKIGIVVGRFNDFITSKLLSGAEDALLRHGVDTNDIDVAWVPGAFEIPFAAKKMAETKKYDAIITLGDVIRGATTHYDYVCNEAAKGIAQAANTTGVPVIFGIVTTENIEQAIERAGTKAGNKGVDCAVSAIEMANLNRSFE";
+
+                             //MNIIQGNLVGTGLKIGIVVGRFNDFITSKLLSGAEDALLRHGVDTNDIDVAWVPGAFEIPFAAKKMAETKKYDAIITLG*VIRGATT*YDYVCNEAAKGIAQAANTTGVPVIFGIVTTENIEQAIERAGTKAGNKGVDCAVSAIEMANLNRSFE
+
+        println("Sequence: ");
+        for(int x=0;x<test_sequence1.length();x++){
+
+            char chr1 = test_sequence1.charAt(x);
+            char chr2 = test_sequence2.charAt(x);
+
+            if(chr1 == chr2)
+                print(chr1);
+            else
+                print('*');
+
+        }//end for
+
+        printf("%n%n");
+
+        //6c75e0dcf1bb4db0
+        long crc64_1 = CRC64.crc64(test_sequence1);
+        printf("%nThe CRC-64 for sequence %s%nis %s %x %n%n", test_sequence1, crc64_1, crc64_1);
+
+        //46638816bda71367
+        long crc64_2 = CRC64.crc64(test_sequence2);
+        printf("%nThe CRC-64 for sequence %s%nis %s %x %n%n", test_sequence2, crc64_2, crc64_2);
+
+        printf("%n%n");
+        exit(0);
+
+    }//end begin
+
+}//end prog CRC64

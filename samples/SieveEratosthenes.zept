@@ -1,0 +1,64 @@
+/*
+  
+  Name: SieveEratosthenes.zept
+
+  Description: This program determines the prime numbers between 1 and a give number 
+               using the sieve of Eratosthenes. The list of prime numbers is then
+               printed with formatting of ten numbers to a line.
+  
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog SieveEratosthenes {
+
+  begin {
+
+    print("Enter a positive integer number : ");
+    int num = readInt();
+
+    println();
+
+    boolean[] is_prime_table = new boolean[num];
+
+    for (int i = 0; i < is_prime_table.length; i++) {
+      is_prime_table[i] = true;
+    }//end for
+
+    for (int i = 2; i < Math.sqrt(num); i++) {
+      if (is_prime_table[i]) {
+        for (int j = (i * i); j < num; j = j + i) {
+          is_prime_table[j] = false;
+        }//end for
+      }//end if
+    }//end for
+
+    printf("List of prime numbers up %d are...%n%n", num);
+
+    int count = 0;
+    for (int i = 2; i < is_prime_table.length; i++) {
+      if (is_prime_table[i]) {
+        printf("%5d ", i);
+        count++;
+        if (count % 10 == 0) {
+          println("  ");
+        }//end if
+      }//end if
+    }//end for
+
+    printf("%n%n");
+
+    exit(0);
+
+  }//end begin
+
+}//end prog SieveEratosthenes

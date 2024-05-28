@@ -1,0 +1,211 @@
+/*
+ 
+  Name: GaussSeidelMethod.zept
+ 
+  Description: This program implements the Gauss-Seidel Method for solving a system
+  of linear equations. Example:
+ 
+  1 2 3
+  6 5 4
+ 
+  Equations:
+ 
+  1x + 2y = 3
+  6x + 5y = 4
+ 
+  Solutions:
+ 
+  x = -1
+  y = +2
+ 
+  Substitute and Solve:
+ 
+  1-1 + 22 = 3
+  6-1 + 52 = 4
+ 
+  -1 + 4  = 3
+  -6 + 10 = 4  
+  
+  Author: William F. Gilreath (will@zepton.xyz)
+ 
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+ 
+  License: This software is subject to the terms of the GNU General  License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General  License (GPL) license agreement
+  to use this software.
+ 
+ */
+
+package xyz.zepton.samples;
+
+prog GaussSeidelMethod {
+
+  static final int MAX_CYCLES = 100;
+  static final double EPSILON = 1e-18; //0.0000000000000000001
+
+  double[][] Matrix;
+
+  void print() {
+
+    for (int i = 0; i < Matrix.length; i++) {
+      print("[ ");
+      for (int j = 0; j < Matrix.length + 1; j++) {
+        printf("%.3f ", Matrix[i][j]);
+      }//end for
+      print("]");
+      println();
+    }//end for
+
+  }//end print
+
+  boolean transform(int r, boolean[] V, int[] rows) {
+
+    if (r == Matrix.length) {
+      double[][] T = new double[Matrix.length][Matrix.length + 1];
+      for (int i = 0; i < rows.length; i++) {
+        arraycopy(Matrix[rows[i]], 0, T[i], 0, Matrix.length + 1);
+      }//end for
+
+      Matrix = T;
+
+      return true;
+    }//end if
+
+    for (int i = 0; i < Matrix.length; i++) {
+      if (V[i]) {
+        continue;
+      }//end if
+
+      double sum = 0;
+
+      for (int j = 0; j < Matrix.length; j++) {
+        sum += Math.abs(Matrix[i][j]);
+      }//end for
+
+      if (2  Math.abs(Matrix[i][r]) > sum) {
+        V[i] = true;
+        rows[r] = i;
+
+        if (transform(r + 1, V, rows)) {
+          return true;
+        }//end if
+
+        V[i] = false;
+      }//end if
+    }//end for
+
+    return false;
+  }//end transform
+
+  boolean toDiagonalDominant() {
+
+    boolean[] visitFlag = new boolean[Matrix.length];
+    int[] rows = new int[Matrix.length];
+
+    for (int i = 0; i < visitFlag.length; i++) {
+      visitFlag[i] = false;
+    }//end for
+
+    return transform(0, visitFlag, rows);
+  }//end toDiagonalDominant
+
+  double[] solve() {
+
+    int cycle = 0;
+
+    double[] X = new double[Matrix.length]; // Approximations
+    double[] P = new double[Matrix.length]; // Prev
+
+    for (int f = 0; f < X.length; f++) {
+      X[f] = 0.0d;
+    }//end for
+
+    println();
+
+    for (;;) {
+      for (int i = 0; i < Matrix.length; i++) {
+        double sum = Matrix[i][Matrix.length]; // b_n
+
+        for (int j = 0; j < Matrix.length; j++) {
+          if (j != i) {
+            sum -= Matrix[i][j]  X[j];
+          }//end if
+        }//end for
+
+        X[i] = 1 / Matrix[i][i]  sum;
+      }//end for
+
+      printf("X_%03d = { ", cycle);
+      for (int i = 0; i < Matrix.length; i++) {
+        printf("%+.15f ", X[i]);
+      }//end for
+
+      println("} ");
+      cycle++;
+      if (cycle == 1) {
+        continue;
+      }//end if
+
+      boolean doneFlag = true;
+      for (int i = 0; i < Matrix.length && doneFlag; i++) {
+        if (Math.abs(X[i] - P[i]) > EPSILON) {
+          doneFlag = false;
+        }//end if
+      }//end for
+
+      if (doneFlag || cycle == MAX_CYCLES) {
+        break;
+      }//end if
+
+      System.arraycopy(X, 0, P, 0, X.length);
+    }//end for
+
+    return X;
+
+  }//end solve
+
+  begin
+
+  {
+
+    print("Enter the number of variables in the equation: ");
+    int num = Integer.parseInt(readLine());
+
+    me.Matrix = new double[num][num + 1];
+    println();
+
+    for (int i = 0; i < num; i++) {
+
+      print("Enter the augmented matrix: ");
+
+      String lineInput = readLine();
+      String[] matrixVal = lineInput.split("\\s");
+
+      for (int j = 0; j <= num; j++) {
+        me.Matrix[i][j] = Integer.parseInt(matrixVal[j]);
+      }//end for
+
+    }//end for
+
+    if (!me.toDiagonalDominant()) {
+      println("The system isn't diagonally dominant: The method cannot guarantee convergence.");
+    }//end if
+
+    println();
+
+    me.print();
+    double[] result = me.solve();
+
+    printf("%nResult is: ");
+    for (int x = 0; x < result.length; x++) {
+      printf("%.3f ", result[x]);
+    }//end for
+
+    printf("%n%n");
+
+    exit(0);
+
+  }//end begin
+
+}//end prog GaussSeidelMethod

@@ -1,0 +1,55 @@
+package xyz.zepton.samples;
+
+/*
+  
+  Name: FetchURL.zept
+
+  Title: Fetch a URL.
+
+  Description: The program fetches the raw HTML content of a URL.
+
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+prog FetchURL {
+
+begin { 
+  
+  final StringBuilder content = new StringBuilder(EMPTY_STRING);
+  
+  try {
+    
+    URL url = new URL("https://www.zepton.xyz");
+    URLConnection urlCon = url.openConnection();
+    
+    println(url.toString());
+    BufferedReader reader = new BufferedReader(new InputStreamReader(urlCon.getInputStream()));
+    
+    String line = EMPTY_STRING;
+
+    while ((line = reader.readLine()) != null){
+      content.append(String.format("%s%n", line));
+    }//end while
+
+    println(content);
+    reader.close();
+  
+  } catch(Exception e) {
+  
+    e.printStackTrace();
+    
+  }//end try
+
+  exit(0);
+  
+  }//end begin
+
+}//end prog FetchURL

@@ -1,0 +1,57 @@
+/*
+
+  Name: MultiplicationTable.zept
+
+  Description: Generate a 10x10 multiplication table from 1 to 100.
+
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog MultiplicationTable {
+
+  static void multiplyTable(final int lim) {
+
+    String limStr = Integer.toString(lim);
+
+    int digits = limStr.length() * 2;
+
+    final String FMT = "%" + Integer.toString(digits) + "d";
+
+    for (int row = 1; row <= lim; row++) {
+
+      for (int col = 1; col <= lim; col++) {
+
+        printf(FMT, (row * col));
+
+      }//end for
+
+      println();
+
+    }//end for
+
+  }//end multiplyTable
+
+  begin {
+
+    printf("%n%n%n");
+
+    multiplyTable(10);
+
+    println();
+
+    exit(0);
+
+  }//end begin
+
+}//end prog MultiplicationTable
+

@@ -1,0 +1,103 @@
+/*
+  
+  Name: TakFunction.zept
+
+  Description: The program implements the Tak or Takeuchi function. The Tak function
+               is used as a benchmark for languages with optimization for recursion.
+
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog TakFunction {
+
+  //original Takeuchi function
+  static long tarai(final long x, final long y, final long z) {
+
+    printf(" tarai(%d,%d,%d) %n", x, y, z);
+
+    if (y < x) {
+      return  tarai(
+              tarai(x - 1, y, z),
+              tarai(y - 1, z, x),
+              tarai(z - 1, x, y)
+              );
+    } else {
+      return y; //# not z!
+    }//end if
+
+  }//end tarai
+
+  //optimized Takeuchi function
+  static long tak(final long x, final long y, final long z) {
+
+    printf(" tak(%d,%d,%d) %n", x, y, z);
+
+    if (y < x) {
+      return tak(
+              tak(x - 1, y, z),
+              tak(y - 1, z, x),
+              tak(z - 1, x, y)
+      );
+    } else {
+      return z;
+    }//end if
+
+  }//end tak
+
+  //efficient Takeuchi function using loop
+  static long tarai_loop(long x, long y, long z) {
+
+    printf(" tarai_loop(%d,%d,%d) %n", x, y, z);
+
+    while (x > y) {
+      long oldx = x, oldy = y;
+      x = tarai_loop(x - 1, y, z);
+      y = tarai_loop(y - 1, z, oldx);
+      if (x <= y) {
+        break;
+      }//end if
+      z = tarai_loop(z - 1, oldx, oldy);
+    }//end while
+
+    return y;
+
+  }//end tarai_loop
+
+  static long Tak(long x, long y, long z) {
+
+    printf(" Tak(%d,%d,%d) %n", x, y, z);
+
+    if (y >= x) {
+      return z;
+    } else {
+      return Tak(Tak(x - 1, y, z), Tak(y - 1, z, x), Tak(z - 1, x, y));
+    }//end if
+  }//end Tak
+
+  begin {
+
+    //T_n(n,0,n+1)
+    long n = 7; //n=7 calls   tak()      function  4597-times, returns tak number = 0
+    //n=7 calls   Tak()      function  4597-times, returns tak number = 0
+    //n=7 calls tarai()      function 20885-times, returns tak number = 8
+    //n=7 calls tarai_loop() function    15-times, returns tak number = 8
+
+    long tak_num = Tak(n, 0, n + 1);
+
+    printf("%nTak function for n=%d = %d%n", n, tak_num);
+
+    exit(0);
+
+  }//end begin
+
+}//end prog TakFunction

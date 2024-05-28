@@ -1,0 +1,111 @@
+/*
+ 
+  Name: MersenneTwister.zept
+ 
+  Description: This program implements the Mersenne Twister pseudo-random number
+  generator algorithm that generates a random 32-bit or 4-byte integer.
+ 
+  Author: William F. Gilreath (will@zepton.xyz)
+ 
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+ 
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+ 
+*/
+
+package xyz.zepton.samples;
+
+prog MersenneTwister {
+
+  static final int N = 624;
+  static final int M = 397;
+  static final int MATRIX_A = 0x9908b0df;
+  static final int UPPER_MASK = 0x80000000;
+  static final int LOWER_MASK = 0x7fffffff;
+
+  int[] mt = new int[N];
+  int mti = N + 1;
+
+  // Initialize the generator with a seed
+  void init(long seed) {
+
+    mt[0] = (int) (seed & 0xffffffff);
+    for (mti = 1; mti < N; mti++) {
+      mt[mti] = (1812433253 * (mt[mti - 1] ^ (mt[mti - 1] >>> 30)) + mti);
+      mt[mti] &= 0xffffffff;
+    }//end for
+
+  }//end init
+
+  // Generate an array of random integers
+  int[] generateIntArray(int length) {
+
+    int[] result = new int[length];
+    for (int i = 0; i < length; i++) {
+      result[i] = generateInt();
+    }//end for
+    return result;
+
+  }//end generateIntArray
+
+  // Generate a random integer
+  int generateInt() {
+
+    if (mti >= N) {
+      twist();
+    }//end if
+
+    int y = mt[mti++];
+    y ^= y >>> 11;
+    y ^= (y << 7) & 0x9d2c5680;
+    y ^= (y << 15) & 0xefc60000;
+    y ^= y >>> 18;
+    return y;
+
+  }//end generateInt
+
+  // Internal method to generate a new state vector
+  void twist() {
+
+    for (int i = 0; i < N; i++) {
+      int x = (mt[i] & UPPER_MASK) + (mt[(i + 1) % N] & LOWER_MASK);
+      int xa = x >>> 1;
+      if ((x % 2) != 0) {
+        xa ^= MATRIX_A;
+      }//end if
+      mt[i] = mt[(i + M) % N] ^ xa;
+    }//end for
+    mti = 0;
+
+  }//end twist
+
+  //print array of integers
+  static void printArray(int[] in_array) {
+
+    for (int i = 0; i < in_array.length; i++) {
+      printf("%d ", in_array[i]);
+    }//end for
+
+    println();
+
+  }//end printArray
+
+  begin {
+
+    final long RANDOM_SEED = 9876543210L;
+
+    me.init(RANDOM_SEED);
+    int[] result = me.generateIntArray(10);
+
+    print("Generated random ints: ");
+    printArray(result);
+    println();
+
+    exit(0);
+
+  }//end begin
+
+}//end prog MersenneTwister

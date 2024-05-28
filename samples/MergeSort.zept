@@ -1,0 +1,95 @@
+/*
+ 
+  Name: MergeSort.zept
+ 
+  Description: This program implements ...
+ 
+  Author: William F. Gilreath (will@zepton.xyz)
+ 
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+ 
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+ 
+*/
+
+package xyz.zepton.samples;
+
+prog MergeSort {
+
+  static void mergeSort(int[] list, int n) {
+    
+    if (n < 2) {
+      return;
+    }//end if
+    
+    int mid = n / 2;
+    int[] l = new int[mid];
+    int[] r = new int[n - mid];
+
+    for (int i = 0; i < mid; i++) {
+      l[i] = list[i];
+    }//end for
+    
+    for (int i = mid; i < n; i++) {
+      r[i - mid] = list[i];
+    }//end for
+    
+    mergeSort(l, mid);
+    mergeSort(r, n - mid);
+
+    merge(list, l, r, mid, n - mid);
+    
+  }//end mergeSort
+
+  static void merge(int[] a, int[] l, int[] r, int left, int right) {
+
+    int i = 0, j = 0, k = 0;
+
+    while (i < left && j < right) {
+
+      if (l[i] <= r[j]) {
+        a[k++] = l[i++];
+      } else {
+        a[k++] = r[j++];
+      }//end if
+
+    }//end while
+
+    while (i < left) {
+      a[k++] = l[i++];
+    }//end while
+
+    while (j < right) {
+      a[k++] = r[j++];
+    }//end while
+    
+  }//end merge
+
+  begin {
+
+    int[] list = { 9, 5, 1, 6, 2, 3, 4, 8, 0, 7 };
+    println();
+
+    print("Start: ");
+    for (int i = 0; i < list.length; i++) {
+      printf("%d ", list[i]);
+    }
+
+    println();
+
+    print("Close: ");
+    mergeSort(list, list.length);
+    for (int i = 0; i < list.length; i++) {
+      print(list[i] + " ");
+    }
+
+    printf("%n%n");
+
+    exit(0);
+    
+  }//end begin
+
+}//end prog MergeSort

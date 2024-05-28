@@ -1,0 +1,156 @@
+/*
+  
+  Name: TicTacToe.zept
+
+  Description: This program implements the game of tic-tac-toe for two players.
+  
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+ */
+package xyz.zepton.samples;
+
+prog TicTacToe {
+
+  static final int BOARD_SIZE = 3;
+  static final char PLAYER_1_SYMBOL = 'X';
+  static final char PLAYER_2_SYMBOL = 'O';
+
+  char[][] board;
+  char currentPlayerSymbol;
+
+  void initialize() {
+    board = new char[BOARD_SIZE][BOARD_SIZE];
+    currentPlayerSymbol = PLAYER_1_SYMBOL;
+    initializeBoard();
+  }//end initialize
+
+  void play() {
+
+    boolean gameOver = false;
+
+    while (!gameOver) {
+      printBoard();
+      int row, col;
+
+      do {
+        print("Player " + currentPlayerSymbol + ", enter your move (row and column): ");
+        row = readInt();
+        col = readInt();
+      } while (!isValidMove(row, col));
+
+      makeMove(row, col);
+
+      if (hasWon()) {
+        printBoard();
+        println("Player " + currentPlayerSymbol + " wins!");
+        gameOver = true;
+      } else if (isBoardFull()) {
+        printBoard();
+        System.out.println("It's a draw!");
+        gameOver = true;
+      } else {
+        switchPlayer();
+      }//end if
+    }//end while
+    
+  }//end play
+
+  void initializeBoard() {
+    for (int row = 0; row < BOARD_SIZE; row++) {
+      for (int col = 0; col < BOARD_SIZE; col++) {
+        board[row][col] = ' ';
+      }//end for
+    }//end for
+  }//end initializeBoard
+
+  void printBoard() {
+    println("-------------");
+
+    for (int row = 0; row < BOARD_SIZE; row++) {
+      for (int col = 0; col < BOARD_SIZE; col++) {
+        print("| " + board[row][col] + " ");
+      }//end for
+      printf("|%n");
+      println("-------------");
+    }//end for
+    
+  }//end printBoard
+
+  boolean isValidMove(int row, int col) {
+    if (row < 0 || row >= BOARD_SIZE || col < 0 || col >= BOARD_SIZE) {
+      println("Invalid move. Please enter a valid row and column.");
+      return false;
+    }//end if
+
+    if (board[row][col] != ' ') {
+      println("Invalid move. That position is already taken.");
+      return false;
+    }//end if
+
+    return true;
+    
+  }//end isValidMove
+
+  void makeMove(int row, int col) {
+    board[row][col] = currentPlayerSymbol;
+  }//end makeMove
+
+  boolean hasWon() {
+    
+    for (int i = 0; i < BOARD_SIZE; i++) {
+      // Check rows
+      if (board[i][0] == currentPlayerSymbol && board[i][1] == currentPlayerSymbol && board[i][2] == currentPlayerSymbol) {
+        return true;
+      }//end if
+
+      // Check columns
+      if (board[0][i] == currentPlayerSymbol && board[1][i] == currentPlayerSymbol && board[2][i] == currentPlayerSymbol) {
+        return true;
+      }//end if
+    }//end for
+
+    // Check diagonals
+    if ((board[0][0] == currentPlayerSymbol && board[1][1] == currentPlayerSymbol && board[2][2] == currentPlayerSymbol)
+            || (board[0][2] == currentPlayerSymbol && board[1][1] == currentPlayerSymbol && board[2][0] == currentPlayerSymbol)) {
+      return true;
+    }//end if
+
+    return false;
+    
+  }//end hasWon
+
+  boolean isBoardFull() {
+    for (int row = 0; row < BOARD_SIZE; row++) {
+      for (int col = 0; col < BOARD_SIZE; col++) {
+        if (board[row][col] == ' ') {
+          return false;
+        }//end if
+      }//end for
+    }//end for
+
+    return true;
+  }//end isBoardFull
+
+  void switchPlayer() {
+    if (currentPlayerSymbol == PLAYER_1_SYMBOL) {
+      currentPlayerSymbol = PLAYER_2_SYMBOL;
+    } else {
+      currentPlayerSymbol = PLAYER_1_SYMBOL;
+    }//end if
+  }//end switchPlayer
+
+  begin {
+    me.initialize();
+    me.play();
+    
+    exit(0);
+  }//end begin
+  
+}//end prog TicTacToe

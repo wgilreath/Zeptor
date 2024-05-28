@@ -1,0 +1,30 @@
+/*
+  
+  Name: Nop.zept
+
+  Description: The program implements a no operator or nop program using the
+               ZeptoN predefined environment function nop(). 
+  
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog Nop {
+   
+  begin {
+
+    nop();
+    exit(0);
+
+  }//end begin
+
+}//end prog Nop

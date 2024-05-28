@@ -1,0 +1,142 @@
+/*
+  
+  Name: TimSort.zept
+
+  Description: This program implements the TimSort algorithm. The TimSort is a sorting
+               algorithm that merges the strengths of the insertion sort and merge sort.
+  
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog TimSort {
+
+  static final int MIN_MERGE = 32;
+
+  static void timsort(int[] array) {
+
+    final int N = array.length;
+    int minRun = minRunLength(MIN_MERGE, N);
+
+    for (int i = 0; i < N; i += minRun) {
+      insertionSort(array, i, Math.min(i + minRun - 1, N - 1));
+    }//end for
+
+    for (int size = minRun; size < N; size *= 2) {
+      for (int start = 0; start < N; start += 2 * size) {
+        int mid = start + size - 1;
+        int end = Math.min(start + 2 * size - 1, N - 1);
+        merge(array, start, mid, end);
+      }//end for
+    }//end for
+  }//end timsort
+
+  static void insertionSort(int[] array, int left, int right) {
+    for (int i = left + 1; i <= right; i++) {
+      int key = array[i];
+      int j = i - 1;
+      while (j >= left && array[j] > key) {
+        array[j + 1] = array[j];
+        j--;
+      }//end while
+      array[j + 1] = key;
+    }//end for
+  }//end insertionSort
+
+  static void merge(int[] array, int left, int mid, int right) {
+    int len1 = mid - left + 1;
+    int len2 = right - mid;
+    int[] leftArr = new int[len1];
+    int[] rightArr = new int[len2];
+
+    arraycopy(array, left, leftArr, 0, len1);
+    arraycopy(array, mid + 1, rightArr, 0, len2);
+
+    int i = 0, j = 0, k = left;
+    while (i < len1 && j < len2) {
+      if (leftArr[i] <= rightArr[j]) {
+        array[k] = leftArr[i];
+        i++;
+      } else {
+        array[k] = rightArr[j];
+        j++;
+      }//end if
+      k++;
+    }//end while
+
+    while (i < len1) {
+      array[k] = leftArr[i];
+      i++;
+      k++;
+    }//end while
+
+    while (j < len2) {
+      array[k] = rightArr[j];
+      j++;
+      k++;
+    }//end while
+  }//end merge
+
+  static int minRunLength(int minMerge, int n) {
+    int r = 0;
+    while (n >= minMerge) {
+      r |= (n & 1);
+      n >>= 1;
+    }//end while
+    return n + r;
+  }//end minRunLength
+
+  //generate random integer array of N-integers within range of 0...max-1, using
+  //  pseudo-random number generator with specific seed value.
+  static int[] randomArray(final int N, final int max, final long seed) {
+
+    Random rd = new Random(seed);
+
+    int[] array = new int[N];
+    for (int i = 0; i < array.length; i++) {
+      array[i] = rd.nextInt(max);
+    }//end for
+
+    return array;
+
+  }//end randomArray
+
+  //print array of integers
+  static void printArray(int[] in_array) {
+
+    for (int i = 0; i < in_array.length; i++) {
+      printf("%d ", in_array[i]);
+    }//end for
+
+    println();
+
+  }//end printArray
+
+  begin {
+
+    final long RANDOM_SEED = 9876543210L;
+
+    int[] array = randomArray(25, 1000, RANDOM_SEED);
+
+    print("Random array: ");
+    printArray(array);
+
+    timsort(array);
+
+    print("Sorted array: ");
+    printArray(array);
+
+    exit(0);
+
+  }//end begin
+
+}//end prog TimSort

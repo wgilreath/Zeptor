@@ -1,0 +1,161 @@
+/*
+  
+  Name: ISBNnumber.zept
+
+  Description: This program implements functions to check if an ISBN (International 
+               Standard Book Number) is valid for 10-digit and 13-digit values.
+  
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+ */
+
+package xyz.zepton.samples;
+
+prog ISBNnumber {
+
+  // method to check number is ISBN 
+  static boolean isISBN(String number) {
+
+    // declare variable
+    int length = 0;
+
+    // remove all hyphens
+    number = number.replace("-", EMPTY_STRING);
+
+    // remove all spaces
+    number = number.replace(" ", EMPTY_STRING);
+
+    // check result string is a number or not
+    try {
+
+      // except for the case where
+      // ISBN-10 ends with X or x
+      char ch = number.charAt(9);
+      ch = Character.toUpperCase(ch);
+
+      if (ch != 'X') {
+        // don't store, only check
+        Long.parseLong(number);
+      }//end if
+
+    } catch (NumberFormatException nfe) {
+      // not a number
+      return false;
+    }//end try
+
+    length = number.length();
+
+    if (length == 13) {
+      return isISBN13(number);
+    } else if (length == 10) {
+      return isISBN10(number);
+    }//end if
+
+    return false;
+
+  }//end isISBN
+
+  // method to check ISBN-10
+  static boolean isISBN10(String number) {
+
+    // declare variables
+    int sum = 0;
+    int digit = 0;
+    char ch = NULL_CHAR;
+
+    // add upto 9th digit
+    for (int i = 1; i <= 9; i++) {
+      ch = number.charAt(i - 1);
+      digit = Character.getNumericValue(ch);
+      sum += (i * digit);
+    }//end for
+
+    // last digit
+    ch = number.charAt(9);
+    ch = Character.toUpperCase(ch);
+
+    if (ch == 'X') {
+      sum += (10 * 10);
+    } else {
+      digit = Character.getNumericValue(ch);
+      sum += (digit * 10);
+    }//end if
+
+    return (sum % 11 == 0);
+
+  }//end isISBN10
+
+  // method to check ISBN-13
+  static boolean isISBN13(String number) {
+
+    // declare variables
+    int sum = 0;
+    int multiple = 0;
+    char ch = NULL_CHAR;
+    int digit = 0;
+
+    // add digits
+    for (int i = 1; i <= 13; i++) {
+
+      if (i % 2 == 0) {
+        multiple = 3;
+      } else {
+        multiple = 1;
+      }//end if
+
+      // fetch digit
+      ch = number.charAt(i - 1);
+
+      // convert it to number
+      digit = Character.getNumericValue(ch);
+
+      // addition
+      sum += (multiple * digit);
+
+    }//end for
+
+    return (sum % 10 == 0);
+
+  }//end isISBN13
+
+  begin {
+
+    println();
+
+    // ISBN Numbers
+    String number10 = "1-4020-7416-6";      //book "Computer Architecture: A Minimalist Perspective"
+    String number13 = "978-1-4020-7416-5";  //book "Computer Architecture: A Minimalist Perspective"
+
+    boolean result = false;
+
+    // check number is isbn number or not
+    result = isISBN(number10);
+
+    // display result
+    if (result) {
+      println(number10 + " is an isbn number.");
+    } else {
+      println(number10 + " is not an isbn number.");
+    }//end if
+
+    result = isISBN(number13);
+
+    // display result
+    if (result) {
+      println(number13 + " is an isbn number.");
+    } else {
+      println(number13 + " is not an isbn number.");
+    }//end if
+
+    exit(0);
+
+  }//end begin
+
+}//end prog ISBNnumber

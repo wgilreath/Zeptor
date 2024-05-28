@@ -1,0 +1,56 @@
+/*
+  
+  Name: AckermannFunction.zept
+
+  Description: The program implements the Ackermann function A(m, n) is a deceptively 
+               simple recursive function that has rapid combinatorial explosion.
+  
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog AckermannFunction {
+
+  static long ackermann(final long m, final long n) {
+      
+      printf("ackermann(%d,%d) %n", m, n);
+      
+      if (m == 0) 
+        return n + 1;
+        
+      if (n == 0) 
+        return ackermann(m - 1, 1);
+        
+      return ackermann(m - 1, ackermann(m, n - 1));
+      
+  }//end ackermann
+
+  begin {
+
+    long M = 3;
+    long N = 5;
+    
+    //ack(3,5) has 42438-calls recursively
+    
+    try {
+      long result = ackermann(M,N); 
+      printf("Ackermann(%d,%d)=%d%n",M,N,result);  //ack(3,5)=253
+    } catch(Exception ex){ //in case of stack overflow in runtime
+      ex.printStackTrace();
+      exit(1);
+    }//end try
+
+    exit(0);
+
+  }//end begin
+
+}//end prog AckermannFunction

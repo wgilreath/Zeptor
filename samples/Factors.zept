@@ -1,0 +1,68 @@
+/*
+ 
+  Name: Factors.zept
+ 
+  Description: This program takes a positive integer number, either from the command-line
+  or read from the user, and the calculate the prime factors such that
+  num = prime_0 * prime_1 * ... * prime_n-2 * prime_n-1.
+
+  Author: William F. Gilreath (will@zepton.xyz)
+ 
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+ 
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+ 
+*/
+
+package xyz.zepton.samples;
+
+prog Factors {
+
+  begin {
+
+    long num = 0;
+
+    //check for command-line arguments, if none read number from user
+    String[] args = getArgs();
+
+    if (args.length == 1) {
+      num = Long.parseLong(args[0]);
+    } else {
+      print("Enter number to find prime factors: ");
+      num = readLong();
+    }//end if
+
+    if (num <= 0) {
+      println("The number to find the prime factors for must be positive!");
+      exit(1);
+    }//end if
+
+    printf("%nThe prime factors of %d: ", num);
+
+    //for each potential factor
+    for (long factor = 2; factor * factor <= num; factor++) {
+
+      //if factor is a factor of n, repeatedly divide it out
+      while (num % factor == 0) {
+
+        printf("%d ", factor);
+        num = num / factor;
+      }//end while
+
+    }//end for
+
+    //if biggest factor occurs only once, n > 1
+    if (num > 1) {
+      println(num);
+    } else {
+      printf("%n");
+    }//end if
+
+    exit(0);
+
+  }//end begin
+
+}//end prog Factors

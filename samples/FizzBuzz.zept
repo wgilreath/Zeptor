@@ -1,0 +1,75 @@
+/*
+ 
+  Name: FizzBuzz.zept
+ 
+  Description: This program implements the infamous yet classic FuzzBuzz problem of
+  if a number is divisible by 3 return "Fizz" if a number is divisible
+  by 5 return "Buzz" and if divisible by both or 15, return "FizzBuzz"
+  otherwise return the number.  *
+  Author: William F. Gilreath (will@zepton.xyz)
+ 
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+ 
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+ 
+*/
+
+package xyz.zepton.samples;
+
+prog FizzBuzz {
+
+  //generalize to two prime number p0 = 3, p1 = 5
+  static String isFizzBuzz1(final int num) {
+
+    if (num % 3 == 0) {
+
+      if (num % 5 == 0) {
+        return "FizzBuzz";
+      } else {
+        return "Fizz";
+      }//end if
+
+    } else if (num % 5 == 0) {
+      return "Buzz";
+    }//end if
+
+    return String.valueOf(num);
+
+  }//end isFizzBuzz
+
+  static String isFizzBuzz2(final int num) {
+
+    StringBuilder str = new StringBuilder();
+
+    if (num % 3 == 0) {
+      str.append("Fizz");
+    }//end if
+
+    if (num % 5 == 0) {
+      str.append("Buzz");
+    }//end if
+
+    return (str.length() == 0) ? String.valueOf(num) : str.toString();
+
+  }//end isFizzBuzz 
+
+  begin {
+
+    println();
+
+    for (int x = 1; x < 100; x++) {
+      printf("FizzBuzz1: %d = %s%n", x, isFizzBuzz1(x));
+      printf("FizzBuzz2: %d = %s%n", x, isFizzBuzz2(x));
+      println();
+    }//end for
+
+    println();
+
+    exit(0);
+
+  }//end begin
+
+}//end prog myProgram

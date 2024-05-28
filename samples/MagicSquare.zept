@@ -1,0 +1,277 @@
+/*
+  Name: MagicSquare.zept
+
+  Title: Magic Square 
+
+  Description: The program creates a magic square of valid integer size from 1...N.
+
+  Author: William F. Gilreath (will@wfgilreath.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog MagicSquare {
+
+  int[][] cells = new int[0][0];
+
+  void init(final int n) {
+    this.cells = new int[n][];
+
+    for (int i = 0; i < n; ++i) {
+      this.cells[i] = new int[n];
+    }//end for
+
+    if (n % 2 == 1) {
+      fillOdd();
+    } else if (n % 4 == 0) {
+      fillDoubleEven();
+    } else if (n >= 6) {
+      fillSingleEven();
+    }//end if
+    
+  }//end init
+
+  void fillOdd() {
+    int n = getN();
+    fillOddArea(0, 0, n, 0);
+  }//end fillOdd
+
+  void fillOddArea(int xOffset, int yOffset, int n, int numberOffset) {
+    
+    int y = 0;
+    int x = (n - 1) / 2;
+
+    setCell(xOffset + x, yOffset + y, numberOffset + 1);
+
+    for (int number = 2; number <= n * n; ++number) {
+      int nextX = x + 1;
+      if (nextX == n) {
+        nextX = 0;
+      }//end if
+
+      int nextY = y - 1;
+      if (nextY == -1) {
+        nextY = n - 1;
+      }//end if
+
+      if (getCell(xOffset + nextX, yOffset + nextY) != 0) {
+        nextX = x;
+        nextY = y + 1;
+        if (nextY == n) {
+          nextY = 0;
+        }//end if
+      }//end if
+
+      setCell(xOffset + nextX, yOffset + nextY, numberOffset + number);
+
+      x = nextX;
+      y = nextY;
+    }//end for
+    
+  }//end fillOddArea
+
+  void fillDoubleEven() {
+    int n = getN();
+    int number = 1;
+
+    for (int y = 0; y < n; ++y) {
+      for (int x = 0; x < n; ++x) {
+        boolean highlighted = false;
+
+        if ((y < n / 4 || y >= 3 * n / 4) && (x >= n / 4 && x < 3 * n / 4)) {
+          highlighted = true;
+        } else if ((x < n / 4 || x >= 3 * n / 4) && (y >= n / 4 && y < 3 * n / 4)) {
+          highlighted = true;
+        }//end if
+
+        if (highlighted) {
+          setCell(x, y, (n * n) - number + 1);
+        } else {
+          setCell(x, y, number);
+        }//end if
+
+        number += 1;
+      }//end for
+    }//end for
+    
+  }//end fillDoubleEven
+
+  void fillSingleEven() {
+    
+    final int N = getN();
+    final int HALF_N = N / 2;
+    final int SWAP_SIZE = N / 4;
+
+    fillOddArea(0, 0, HALF_N, 0);
+    fillOddArea(HALF_N, HALF_N, HALF_N, HALF_N * HALF_N);
+    fillOddArea(HALF_N, 0, HALF_N, (HALF_N * HALF_N) * 2);
+    fillOddArea(0, HALF_N, HALF_N, (HALF_N * HALF_N) * 3);
+
+    for (int x = 0; x < SWAP_SIZE; ++x) {
+      swapCells(x, 0, x, HALF_N);
+      swapCells(x, HALF_N - 1, x, N - 1);
+
+      for (int y = 1; y < HALF_N - 1; ++y) {
+        swapCells(x + 1, y, x + 1, y + HALF_N);
+      }//end for
+    }//end for
+
+    for (int x = 0; x < SWAP_SIZE - 1; ++x) {
+      for (int y = 0; y < HALF_N; ++y) {
+        swapCells(N - x - 1, y, N - x - 1, y + HALF_N);
+      }//end for
+    }//end for
+    
+  }//end fillSingleEven
+
+  void swapCells(int x1, int y1, int x2, int y2) {
+    int cell1 = getCell(x1, y1);
+    int cell2 = getCell(x2, y2);
+
+    setCell(x1, y1, cell2);
+    setCell(x2, y2, cell1);
+  }//end swapCells
+
+  int getN() {
+    return cells.length;
+  }//end getN
+
+  int getCell(int x, int y) {
+    return cells[x][y];
+  }//end getCell
+
+  void setCell(int x, int y, int value) {
+    cells[x][y] = value;
+  }//end setCell
+
+  void checkMagicSquare() {
+    int total = -1;
+    int n = getN();
+    int expectedValue = ((n * n * n) + n) / 2;
+    printf("Checking magic square [ %d x %d ] the expected sum is: %d.%n%n", n, n, expectedValue);
+    total = 0;
+    for (int x = 0; x < n; x++) {
+      total = total + getCell(x, x);
+    }//end for
+
+    if (total != expectedValue) {
+      throw new RuntimeException("Leading diagonal is not the expected value!");
+    }//end if
+
+    total = 0;
+    for (int x = 0; x < n; x++) {
+      total = total + getCell(x, n - x - 1);
+    }//end for
+
+    if (total != expectedValue) {
+      throw new RuntimeException("Trailing diagonal is not the expected value!");
+    }//end if
+
+    total = 0;
+    for (int x = 0; x < n; x++) {
+      for (int y = 0; y < n; y++) {
+        total = total + getCell(x, y);
+      }//end for
+
+      if (total != expectedValue) {
+        throw new RuntimeException("Row is not the expected value!");
+      }//end if
+      total = 0;
+    }//end for
+
+    total = 0;
+    for (int x = 0; x < n; x++) {
+      for (int y = 0; y < n; y++) {
+        total = total + getCell(x, y);
+      }//end for 
+
+      if (total != expectedValue) {
+        throw new RuntimeException("Row is not the expected value!");
+      }//end if
+      total = 0;
+    }//end for
+    
+  }//end checkMagicSquare
+
+  String getMagicSquare() {
+
+    final int N = getN();
+    final int largestNumberLength = Integer.toString(N * N).length();
+    final String FMT_STRING = " %-" + largestNumberLength + "d ";
+
+    final StringBuilder magic_sqr = new StringBuilder();
+
+    for (int y = 0; y < N; ++y) {
+      for (int x = 0; x < N; ++x) {
+        int value = getCell(x, y);
+        if (value == 0) {
+          magic_sqr.append(" ");
+          for (int i = 0; i < largestNumberLength; ++i) {
+            magic_sqr.append(".");
+          }//end for
+          magic_sqr.append(" ");
+        } else {
+          magic_sqr.append(String.format(FMT_STRING, value));
+        }//end if
+      }//end for
+      magic_sqr.append(EOL);
+    }//end for
+
+    return magic_sqr.toString();
+    
+  }//end getMagicSquare
+
+  int getSquareSize() {
+
+    int tmp = -1;
+    loop:
+    do {
+      try {
+        printf("Enter magic square dimension: ");
+        tmp = readInt();
+        //return tmp;
+        break;
+      } catch (Exception _ignore) {
+        tmp = -1;
+        println();
+        println("Invalid input! Try again...");
+        continue loop;
+      }//end try
+    } while (true); //end for
+    return tmp;
+    
+  }//end getSquareSize 
+
+  begin {
+
+    printf("%nMagic Square Generator!!!%n%n");
+
+    final int N = me.getSquareSize();
+    println();
+
+    if (N <= 1) {
+      me.init(1);
+    } else if (N == 2) {
+      printf("Error: No magic square exists!%n");
+      exit(1);
+    } else {
+      me.init(N);
+    }//end if
+
+    me.checkMagicSquare();
+
+    println(me.getMagicSquare());
+
+    exit(0);
+
+  }//end begin
+
+}//end prog MagicSquare

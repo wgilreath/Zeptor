@@ -1,0 +1,97 @@
+/*
+ 
+  Name: InfixToPrefix.zept
+ 
+  Description: This program implements an infix to prefix expression translator.
+ 
+  Author: William F. Gilreath (will@zepton.xyz)
+ 
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+ 
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+ 
+ */
+
+package xyz.zepton.samples;
+
+prog InfixToPrefix {
+
+  static int opPrec(char c) {
+    switch (c) {
+      case '+':
+      case '-':
+        return 1;
+      case '*':
+      case '/':
+        return 2;
+      case '^':
+        return 3;
+    }//end switch
+    return -1;
+  }//end opPrec
+
+  static StringBuilder infixToPrefix(final String expr) {
+
+    StringBuilder result = new StringBuilder();
+    StringBuilder input = new StringBuilder(expr);
+    Stack<Character> stack = new Stack<>();
+
+    input.reverse();
+    char[] charsExpr = new String(input).toCharArray();
+    for (int i = 0; i < charsExpr.length; i++) {
+
+      if (charsExpr[i] == '(') {
+        charsExpr[i] = ')';
+      } else if (charsExpr[i] == ')') {
+        charsExpr[i] = '(';
+      }//end if
+
+    }//end for
+
+    for (int i = 0; i < charsExpr.length; i++) {
+
+      char chr = charsExpr[i];
+
+      //check if char is operator or operand
+      if (opPrec(chr) > 0) {
+        while (!stack.isEmpty() && opPrec(stack.peek()) >= opPrec(chr)) {
+          result.append(stack.pop());
+        }//end while
+        stack.push(chr);
+      } else if (chr == ')') {
+        char xch = stack.pop();
+        while (xch != '(') {
+          result.append(xch);
+          xch = stack.pop();
+        }//end while
+      } else if (chr == '(') {
+        stack.push(chr);
+      } else {
+        result.append(chr);
+      }//end if
+
+    }//end for
+
+    for (int i = 0; i <= stack.size(); i++) {
+      result.append(stack.pop());
+    }//end for
+
+    return result.reverse();
+
+  }//end infixToPrefix
+
+  begin {
+
+    String exp = "A+B(C^D-E)";
+    
+    println("Infix  Expression: " + exp);
+    println("Prefix Expression: " + infixToPrefix(exp));
+
+    exit(0);
+
+  }//end begin
+
+}//end prog InfixToPrefix

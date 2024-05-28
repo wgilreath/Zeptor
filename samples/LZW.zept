@@ -1,0 +1,135 @@
+/*
+  
+  Name: LZW.zept
+
+  Description: This program implements Lempel-Ziv-Welch data compression algorithm, or
+               dictionary based data compression of a text string.
+  
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog LZW {
+
+  static final int DICT_SIZE = 256;
+
+  //Compress a string to a list of output symbols. 
+  static List<Integer> compress(String uncompressed) {
+
+    //Build the dictionary.
+    int dictSize = LZW.DICT_SIZE;
+
+    Map<String, Integer> dictionary = new HashMap<String, Integer>();
+
+    for (int idx = 0; idx < LZW.DICT_SIZE; idx++) {
+      dictionary.put(EMPTY_STRING + (char) idx, idx);
+    }//end for
+
+    String word = EMPTY_STRING;
+    List<Integer> result = new ArrayList<Integer>();
+
+    for (char chr : uncompressed.toCharArray()) {
+
+      String word_chr = word + chr;
+
+      if (dictionary.containsKey(word_chr)) {
+        word = word_chr;
+      } else {
+        result.add(dictionary.get(word));
+
+        //Add wc to the dictionary.
+        dictionary.put(word_chr, dictSize++);
+        word = EMPTY_STRING + chr;
+
+      }//end if
+
+    }//end for
+
+    // Output the code for the word.
+    if (!word.equals(EMPTY_STRING)) {
+      result.add(dictionary.get(word));
+    }//end if
+
+    return result;
+
+  }//end compress
+
+  //Decompress a list of output ks to a string.
+  static String decompress(List<Integer> compressed) {
+
+    //Build the dictionary.
+    int dictSize = LZW.DICT_SIZE;
+
+    Map<Integer, String> dictionary = new HashMap<Integer, String>();
+
+    for (int idx = 0; idx < LZW.DICT_SIZE; idx++) {
+      dictionary.put(idx, EMPTY_STRING + (char) idx);
+    }
+
+    String word = EMPTY_STRING + (char) (int) compressed.remove(0);
+    StringBuffer result = new StringBuffer(word);
+    String entry = EMPTY_STRING;
+
+    for (int key : compressed) {
+
+      if (dictionary.containsKey(key)) {
+        entry = dictionary.get(key);
+      } else if (key == dictSize) {
+        entry = word + word.charAt(0);
+      } else {
+        throw new RuntimeException("Bad compressed key: " + key);
+      }//end if
+
+      result.append(entry);
+
+      //Add word+entry[0] to the dictionary.
+      dictionary.put(dictSize++, word + entry.charAt(0));
+
+      word = entry;
+
+    }//end for
+
+    return result.toString();
+
+  }//end decompress
+
+  begin {
+
+    String testString //= "TOBEORNOTTOBEORTOBEORNOT";
+                      //= "thars gold in them thar hills";
+                      //= "THARSGOLDINTHEMTHARHILLS";
+                      = "WHYIWONDERWHYIWONDERWHYIWONDERWHYI";
+
+    List<Integer> compressed = compress(testString);
+
+    printf("Raw string length: %d%n", testString.length());
+    printf("Compressed length: %d%n", compressed.size());
+    println();
+    printf(" Test String: %s%n", testString);
+    printf("  Compressed: ");
+
+    for (Integer intval : compressed) {
+      printf("%c", intval);
+    }//end for
+
+    println();
+
+    String decompressed = decompress(compressed);
+
+    printf("Decompressed: %s%n", decompressed);
+    println();
+
+    exit(0);
+
+  }//end begin
+
+}//end prog LZW

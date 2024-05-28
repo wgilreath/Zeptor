@@ -1,0 +1,69 @@
+/*
+ 
+  Name: PalindromeChecker.zept
+ 
+  Description: This program implements a function to check if a given string is a
+  palindrome.  *
+  Author: William F. Gilreath (will@zepton.xyz)
+ 
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+ 
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+ 
+*/
+
+package xyz.zepton.samples;
+
+prog PalindromeChecker {
+
+  static boolean isPalindrome(final String input) {
+
+    // Remove all non-alphanumeric characters and convert to lowercase
+    String cleanInput = input.replaceAll("[^a-zA-Z0-9]", EMPTY_STRING).toLowerCase();
+
+    int left = 0;
+    int right = cleanInput.length() - 1;
+
+    while (left < right) {
+
+      if (cleanInput.charAt(left) != cleanInput.charAt(right)) {
+        return false;
+      }//end if
+
+      left++;
+      right--;
+    }//end while
+
+    return true;
+
+  }//end isPalindrome
+
+  begin {
+
+    for (;;) {
+
+      print("Enter a string (\"bye\" to exit...): "); //otto, race car, a man a plan a canal panama
+      String input = readLine();
+      if (input.toLowerCase().trim().equals("bye")) {
+        break;
+      }//end if
+
+      print("The string is ");
+
+      if (!isPalindrome(input)) {
+        print("not ");
+      }//end if
+
+      println("a palindrome.");
+      println();
+
+    }//end for
+
+    exit(0);
+
+  }//end begin
+
+}//end prog PalindromeChecker

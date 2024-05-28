@@ -1,0 +1,59 @@
+/*
+  
+  Name: RandomNumberGenerator.zept
+
+  Description: This program implements a linear congruential pseudo-random number 
+               generator to generate 100 random numbers. 
+  
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog RandomNumberGenerator {
+
+  //parameters of linear congruential pseudo-random number generator
+  static final int MULTIPLIER = 1103515245;
+  static final int INCREMENT = 12345;
+  static final int MODULUS = (int) Math.pow(2, 31);
+
+  static int seed = -1;
+
+  static int generateRandomNumber() {
+
+    seed = (MULTIPLIER * seed + INCREMENT) % MODULUS;
+    return seed;
+
+  }//end generateRandomNumber
+
+  begin {
+
+    seed = (int) currentTimeMillis(); //initialize random number generator with time
+
+    printf("Random Numbers: %n");
+
+    for (int i = 0; i < 100; i++) {
+
+      if (i % 10 == 0 && i > 0) { //generate 10 random numbers, wait for keyboard return
+        readLine();
+      }//end if
+
+      printf("%-3d  %+d %n", (i + 1), generateRandomNumber());
+
+    }//end for
+
+    println();
+
+    exit(0);
+
+  }//end begin
+
+}//end prog RandomNumberGenerator

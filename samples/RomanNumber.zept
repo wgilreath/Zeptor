@@ -1,0 +1,61 @@
+/*
+  
+  Name: RomanNumber.zept
+
+  Description: This program implements a year as a long integer to Roman numeral 
+               year conversion. The number is between 1 and 3999.
+  
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog RomanNumber {
+
+  // define possible Roman numeral symbols and their values
+  static final String[] SYMBOLS = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+  static final int[] VALUES = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+
+  // define method to convert a long yearNum to its Roman numeral representation
+  static String convertToRomanNumber(long yearNum) {
+    
+    if (yearNum <= 0 || yearNum >= 4000) {
+      throw new RuntimeException("Invalid number range from 1 to 3999: " + yearNum);
+    }//end if
+    
+    StringBuilder result = new StringBuilder();
+    
+    int idx = 0;
+    while (yearNum > 0) {
+      if (yearNum >= VALUES[idx]) {
+        result.append(SYMBOLS[idx]);
+        yearNum -= VALUES[idx];
+      } else {
+        idx = idx + 1;
+      }//end if
+      
+    }//end while
+    
+    return result.toString();
+    
+  }//end convertToRomanNumber
+
+  // define the main method to test the conversion
+  begin {
+  
+    long number = 1971;
+    String romanNum = convertToRomanNumber(number);
+    println(number + " is " + romanNum + " in Roman numerals.");
+    exit(0);
+    
+  }//end begin
+
+}//end prog RomanNumber

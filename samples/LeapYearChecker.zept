@@ -1,0 +1,56 @@
+/*
+  
+  Name: LeapYearChecker.zept
+
+  Description: This program implements a check if a given year as integer as 
+               input and determines if it is a leap year. the rules of leap 
+               years: A year is a leap year if it is divisible by 4, unless it 
+               is divisible by 100. If a year is divisible by 100 and also 
+               divisible by 400, then it is considered a leap year.
+  
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog LeapYearChecker {
+
+  static boolean isLeapYear(int year) {
+
+    if (year % 4 != 0) {
+      return false;
+    } else if (year % 100 != 0) {
+      return true;
+    } else {
+      return year % 400 == 0;
+    }//end if
+
+  }//end isLeapYear
+
+  begin {
+
+    print("Enter a year: ");
+
+    int year = readInt();
+
+    if (isLeapYear(year)) {
+      printf("The year: %d is a leap year.",    year);
+    } else {
+      printf("The year: %d is not a leap year.",year);
+    }//end if
+
+    println();
+
+    exit(0);
+
+  }//end begin
+
+}//end prog LeapYearChecker

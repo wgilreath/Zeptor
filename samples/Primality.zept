@@ -1,0 +1,205 @@
+/*
+  
+  Name: Primality.zept
+
+  Description: The program implements three functions that test for the primality or
+               is the number mathematically prime. The three functions are common is
+               a number prime functions. 
+  
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog Primality {
+
+  //function is prime using half the range from the value
+  static boolean isPrimeHalf(final long n) {
+
+    if (n <= 1) {
+      return false;
+    } else {
+      for (long i = 2; i <= n / 2; i++) {
+        if ((n % i) == 0) {
+          return false;
+        }//end if
+      }//end for
+      return true;
+    }//end if
+
+  }//end isPrimeHalf
+
+  //function is prime uses square root of the value 
+  static boolean isPrimeSqrt(final long n) {
+
+    if (n == 2 || n == 3) {
+      return true;
+    }//end if
+
+    if (n % 2 == 0) {
+      return false;
+    }//end if
+
+    long sqrt = (long) Math.sqrt(n) + 1; //call to square root function
+
+    for (long i = 3; i < sqrt; i += 2) {
+      if (n % i == 0) {
+        return false;
+      }//end if
+    }//end for
+
+    return true;
+
+  }//end isPrimeSqrt
+
+  //function uses the form 6n+1 to check is prime
+  static boolean isPrime6N1(final long n) {
+
+    if (n <= 1) {
+      return false;
+    }//end if
+
+    if (n <= 3) {
+      return true;
+    }//end if
+
+    // this checks 6k, 6k + 2, 6k + 4 and 6k + 3
+    if (n % 2 == 0 || n % 3 == 0) {
+      return false;
+    }//end if
+
+    for (long i = 5; i * i <= n; i = i + 6) {
+      // it starts with number 5, which is 6k - 1
+      // and test n % ( i + 2 ) means 6k + 1
+      if (n % i == 0 || n % (i + 2) == 0) {
+        return false;
+      } // end if
+    } // end for
+
+    return true;
+
+  }// end isPrime6N1
+
+  static final boolean isPrimeOddSqr(final long num) {
+
+    //numbers 1, 2, num = 2*k, 4, 8,...only 2 is prime
+    if (num < 2 || num % 2 == 0) {
+      return (num == 2);
+    }//end if
+
+    long lim = 1;
+    long odd = 3;
+
+    while (num > lim) {
+      if (num % odd == 0) {
+        return (num == odd);
+      }//end if
+
+      lim = lim + odd; //1 + 3 + 5 + 7... == 1, 4, 9, 16...   square root upper limit using square  O(1)
+      odd = odd + 2;   //3,5,7,9,11,13,15,17,19,21,23,25...   odd numbers test for prime.   O(1)
+
+    }//end while
+
+    return true;
+
+  }//end isPrimeOddSqr
+
+  static boolean isPrime(final long n) {
+
+    if (n == 2) {
+      return true;
+    }//end if
+
+    if (n % 2 == 0) {
+      return false;
+    }//end if
+
+    //long sqrt = (long) Math.sqrt(n) + 1; //call to square root function
+    long lim = 1;
+    long odd = 3;
+
+    for (long i = 3; n > lim; i += 2) {
+      //for (long i = 3; i < sqrt; i += 2) {
+      if (n % i == 0) {
+        return false;
+      }//end if
+
+      lim = lim + odd; //1 + 3 + 5 + 7... == 1, 4, 9, 16...   square root upper limit using square  O(1)
+      odd = odd + 2;   //3,5,7,9,11,13,15,17,19,21,23,25...   odd numbers test for prime.   O(1)
+
+    }//end for
+
+    return true;
+
+  }//end isPrimeSqrt
+
+  begin
+
+  {
+
+    final int LIMIT = 100;   //limit is number of times to test values
+    final int RANGE = 100000; //range is 1...10001 for random value
+
+    Random rand = new Random(9876543210L);
+
+    for (int x = 0; x < LIMIT; x++) {
+
+      long timeStart = 0, timeClose = 0;
+
+      int randVal = rand.nextInt(RANGE) + 1000000;
+
+      boolean primeFlag = false;
+
+      //check for primality and time each function to show performance
+      timeStart = nanoTime();
+      primeFlag = Primality.isPrimeHalf(randVal);
+      timeClose = nanoTime();
+
+      //only report results if value is prime
+      if (primeFlag) {
+
+        printf("Time: %8d-ns; Value:%5d isPrimeHalf():   %s%n", (timeClose - timeStart), randVal, primeFlag);
+
+        timeStart = nanoTime();
+        primeFlag = Primality.isPrimeSqrt(randVal);
+        timeClose = nanoTime();
+
+        printf("Time: %8d-ns; Value:%5d isPrimeSqrt():   %s%n", (timeClose - timeStart), randVal, primeFlag);
+
+        timeStart = nanoTime();
+        primeFlag = Primality.isPrime6N1(randVal);
+        timeClose = nanoTime();
+
+        printf("Time: %8d-ns; Value:%5d isPrime6N1():    %s%n", (timeClose - timeStart), randVal, primeFlag);
+
+        timeStart = nanoTime();
+        primeFlag = Primality.isPrimeOddSqr(randVal);
+        timeClose = nanoTime();
+
+        printf("Time: %8d-ns; Value:%5d isPrimeOddSqr(): %s%n", (timeClose - timeStart), randVal, primeFlag);
+
+        timeStart = nanoTime();
+        primeFlag = Primality.isPrime(randVal);
+        timeClose = nanoTime();
+
+        printf("Time: %8d-ns; Value:%5d isPrime():       %s%n", (timeClose - timeStart), randVal, primeFlag);
+
+        printf("%n%n");
+
+      }//end if
+    }//end for
+
+    exit(0);
+
+  }//end begin
+
+}//end prog Primality
+

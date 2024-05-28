@@ -1,0 +1,69 @@
+/*
+  
+  Name: OpenDoorsProblem.zept
+
+  Description: This program implements a solution to the "open doors" problem. The 
+               solution is to iterate through a boolean array where the state of 
+               each door is true if open, or false if closed. 
+               
+               The state changes when the door number is a multiple of the current 
+               index for each pass through the boolean array. 
+               
+               More simply, the program is a square root detector for a given index.
+               1 = 1^2 = 1, 2 = 2^2 = 4, ...    n = n^2 
+  
+  Riddle:      N doors are closed. In the first pass, I open all of them. In the second 
+               pass, I toggle every second door. In the third pass, I toggle every third 
+               door. I continue this until I have completed the Nth pass. 
+               
+               Find all the doors that will remain open after N passes.
+  
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog OpenDoorsProblem {
+
+  //Define a function to solve the problem
+  static void solve(final int numDoors) {
+
+    boolean[] doors = new boolean[numDoors];
+
+    for (int i = 1; i <= numDoors; i++) {
+
+      for (int j = i - 1; j < numDoors; j += i) {
+        doors[j] = !doors[j];
+      }//end for
+
+    }//end for
+
+    for (int i = 0; i < numDoors; i++) {
+
+      if (doors[i]) {
+        println("Door " + (i + 1) + " is open.");
+      }//end if
+
+    }//end for
+
+  }//end solve
+
+  begin {
+
+    final int numDoors = 100;
+
+    solve(numDoors);
+
+    exit(0);
+
+  }//end begin
+
+}//end prog OpenDoorsProblem

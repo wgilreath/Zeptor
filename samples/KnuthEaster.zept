@@ -1,0 +1,88 @@
+/*
+  
+  Name: KnuthEaster.zept
+
+  Description: This program implements the date of Easter Day algorithm, showing the
+               intermediate results for each step in the process. This algorithm is
+               from Donald Knuth, The Art of Computer Programming, Volume 1 Fundamental
+               Algorithms 2nd edition, 1973, pp. 155-156.
+  
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog KnuthEaster {
+
+  begin {
+
+    String[] args = getArgs();
+
+    if (args.length == 0) {
+      args = new String[1];
+      args[0] = "2023";
+    }//end if
+
+    int year = Integer.parseInt(args[0]);
+
+    printf(" year   = %d %n", year);
+    if (year < 1582) {
+      exit(2);
+    }//end if
+
+    int golden = (year % 19) + 1;
+    printf("golden  = %d %n", golden);
+
+    int century = (year / 100) + 1;
+    printf("century = %d %n", century);
+
+    int x = (3 * century / 4) - 12;
+    int z = (8 * century / 25) - 5;
+
+    printf("      x = %d %n", x);
+    printf("      z = %d %n", z);
+
+    int day = (5 * year / 4) - x - 10;
+
+    printf("    day = %d %n", day);
+
+    int epact = (11 * golden + 20 + z - x) % 30;
+
+    if (((epact == 25) && (golden > 11)) || (epact == 24)) {
+      epact++;
+    }//end if
+
+    printf("  epact = %d %n", epact);
+
+    int moon = 44 - epact;
+    if (moon < 21) {
+      moon += 30;
+    }//end if
+
+    printf("   moon = %d %n", moon);
+
+    int n = (moon + 7) - ((day + moon) % 7);
+
+    printf("      n = %d %n", n);
+
+    printf("%nEaster Day is: ");
+
+    if (n > 31) {
+      printf("%d April %d %n%n", n - 31, year);
+    } else {
+      printf("%d March %d %n%n", n, year);
+    }//end if
+
+    exit(0);
+
+  }//end begin
+  
+}//end prog KnuthEaster

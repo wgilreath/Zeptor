@@ -1,0 +1,431 @@
+/* 
+
+  Name: Wumpus.zept
+ 
+  Description: Classic computer game "Hunt the Wumpus" originally in BASIC
+               now ported to ZeptoN.
+  
+  Author: William F. Gilreath (will@zepton.xyz)
+ 
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+ 
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+
+*/
+
+package xyz.zepton.samples;
+
+prog Wumpus {
+
+  static final char EOLC = '\n';
+
+  enum Finish {
+    LOSE, NOT, WIN
+  };
+
+  static Random rand = null;
+
+  static int arrows = -1;
+  static boolean debug = false;
+
+  static final int YOU = 0;
+  static final int WUMPUS = 1;
+  static final int PIT1 = 2;
+  static final int PIT2 = 3;
+  static final int BATS1 = 4;
+  static final int BATS2 = 5;
+  static final int LOCS = 6;
+
+  static int loc[] = new int[20];
+
+  static Finish finished;
+
+  static final int cave[][] = new int[][]{
+    {1, 4, 7},
+    {0, 2, 9},
+    {1, 3, 11},
+    {2, 4, 13},
+    {0, 3, 5},
+    {4, 6, 14},
+    {5, 7, 16},
+    {0, 6, 8},
+    {7, 9, 17},
+    {1, 8, 10},
+    {9, 11, 18},
+    {2, 10, 12},
+    {11, 13, 19},
+    {3, 12, 14},
+    {5, 13, 15},
+    {14, 16, 19},
+    {6, 15, 17},
+    {8, 16, 18},
+    {10, 17, 19},
+    {12, 15, 18},};
+
+  static int getnum(final String prompt) {
+
+    int n = -1;
+
+    for (;;) {
+
+      try {
+
+        printf("%s: ", prompt);
+        String str = readLine();
+        n = Integer.parseInt(str);
+        break;
+
+      } catch (Exception ignore) {
+
+        printf("Not an number! Try again!!%n");
+
+      }//end try
+
+    }//end for
+
+    return n;
+
+  }//end getnum
+
+  static int getlet(final String prompt) {
+
+    char c = EOLC;
+
+    printf("%s: ", prompt);
+    while (c == EOLC) {
+
+      String str = readLine().toUpperCase();
+      c = str.charAt(0);
+
+    }//end while
+
+    return c;
+
+  }//end getlet
+
+  static void print_instructions() {
+
+    printf(EMPTY_STRING
+            + " WELCOME TO 'HUNT THE WUMPUS'%n"
+            + " THE WUMPUS LIVES IN A CAVE OF 20 ROOMS. EACH ROOM%n"
+            + " HAS 3 TUNNELS LEADING TO OTHER ROOMS. (LOOK AT A%n"
+            + " DODECAHEDRON TO SEE HOW THIS WORKS-IF YOU DON'T KNOW%n"
+            + " WHAT A DODECAHEDRON IS, ASK SOMEONE)%n"
+            + EOL
+            + " HAZARDS:%n"
+            + " BOTTOMLESS PITS: TWO ROOMS HAVE BOTTOMLESS PITS IN THEM%n"
+            + " IF YOU GO THERE, YOU FALL INTO THE PIT (& LOSE!)%n"
+            + " SUPER BATS     : TWO OTHER ROOMS HAVE SUPER BATS. IF YOU%n"
+            + " GO THERE, A BAT GRABS YOU AND TAKES YOU TO SOME OTHER%n"
+            + " ROOM AT RANDOM. (WHICH MAY BE TROUBLESOME)%n"
+            + " WUMPUS:%n"
+            + " THE WUMPUS IS NOT BOTHERED BY HAZARDS (HE HAS SUCKER%n"
+            + " FEET AND IS TOO BIG FOR A BAT TO LIFT).  USUALLY%n"
+            + " HE IS ASLEEP.  TWO THINGS WAKE HIM UP: YOU SHOOTING AN%n"
+            + " ARROW OR YOU ENTERING HIS ROOM.%n"
+            + " IF THE WUMPUS WAKES HE MOVES (P=.75) ONE ROOM%n"
+            + " OR STAYS STILL (P=.25).  AFTER THAT, IF HE IS WHERE YOU%n"
+            + " ARE, HE EATS YOU UP AND YOU LOSE!%n"
+            + EOL
+            + " YOU:%n"
+            + " EACH TURN YOU MAY MOVE OR SHOOT A CROOKED ARROW%n"
+            + " MOVING:  YOU CAN MOVE ONE ROOM (THRU ONE TUNNEL)%n"
+            + " ARROWS:  YOU HAVE 5 ARROWS.  YOU LOSE WHEN YOU RUN OUT%n"
+            + " EACH ARROW CAN GO FROM 1 TO 5 ROOMS. YOU AIM BY TELLING%n"
+            + "   THE COMPUTER THE ROOM#S YOU WANT THE ARROW TO GO TO.%n"
+            + "   IF THE ARROW CAN'T GO THAT WAY (IF NO TUNNEL) IT MOVES%n"
+            + "   AT RANDOM TO THE NEXT ROOM.%n"
+            + "     IF THE ARROW HITS THE WUMPUS, YOU WIN.%n"
+            + "     IF THE ARROW HITS YOU, YOU LOSE.%n"
+            + " WARNINGS:%n"
+            + " WHEN YOU ARE ONE ROOM AWAY FROM A WUMPUS OR HAZARD,%n"
+            + " THE COMPUTER SAYS:%n"
+            + " WUMPUS:  'I SMELL A WUMPUS'%n"
+            + " BAT   :  'BATS NEARBY'%n"
+            + " PIT   :  'I FEEL A DRAFT'%n"
+            + EOL
+    );
+
+  }//end print_instructions
+
+  static void show_room() {
+
+    printf(EOL);
+
+    for (int k = 0; k < 3; k++) {
+
+      int room = cave[loc[YOU]][k];
+
+      if (room == loc[WUMPUS]) {
+        printf("I SMELL A WUMPUS!%n");
+      } else if (room == loc[PIT1] || room == loc[PIT2]) {
+        printf("I FEEL A DRAFT%n");
+      } else if (room == loc[BATS1] || room == loc[BATS2]) {
+        printf("BATS NEARBY!%n");
+      }//end if
+
+    }//end for
+
+    printf("YOU ARE IN ROOM %d%n", loc[YOU] + 1);
+
+    printf("TUNNELS LEAD TO %d %d %d%n%n",
+            cave[loc[YOU]][0] + 1,
+            cave[loc[YOU]][1] + 1,
+            cave[loc[YOU]][2] + 1);
+
+  }//end show_room
+
+  static boolean move_or_shoot() {
+
+    int c = -1;
+
+    while ((c != 'S') && (c != 'M')) {
+      c = getlet("SHOOT OR MOVE (S-M)");
+    }//end while
+
+    return (((c == 'S') ? 1 : 0) == 1);
+
+  }//end move_or_shoot
+
+  static void move_wumpus() {
+
+    int k = rand.nextInt(4);
+
+    if (k < 3) {
+      loc[WUMPUS] = cave[loc[WUMPUS]][k];
+    }//end if
+
+    if (loc[WUMPUS] == loc[YOU]) {
+      printf("TSK TSK TSK - WUMPUS GOT YOU!%n");
+      finished = Finish.LOSE;
+    }//end if
+
+  }//end move_wumpus
+
+  static void shoot() {
+
+    int[] path = new int[5];
+    int scratchloc = -1;
+
+    finished = Finish.NOT;
+
+    int len = -1;
+
+    while (len < 1 || len > 5) {
+      len = getnum("NO. OF ROOMS (1-5)");
+    }//end while
+
+    int k = 0;
+
+    while (k < len) {
+      path[k] = getnum("ROOM #") - 1;
+
+      if ((k > 1) && (path[k] == path[k - 2])) {
+        printf("ARROWS AREN'T THAT CROOKED - TRY ANOTHER ROOM%n");
+        continue;
+      }//end if
+
+      k++;
+
+    }//end while
+
+    scratchloc = loc[YOU];
+
+    for (int kx = 0; kx < len; kx++) {
+
+      if ((cave[scratchloc][0] == path[kx])
+              || (cave[scratchloc][1] == path[kx])
+              || (cave[scratchloc][2] == path[kx])) {
+        scratchloc = path[kx];
+      } else {
+        scratchloc = cave[scratchloc][rand.nextInt(3)];
+      }//end if
+
+      if (scratchloc == loc[WUMPUS]) {
+        printf("AHA! YOU GOT THE WUMPUS!%n");
+        finished = Finish.WIN;
+      } else if (scratchloc == loc[YOU]) {
+        printf("OUCH! ARROW GOT YOU!%n");
+        finished = Finish.LOSE;
+      }//end if
+
+      if (finished != Finish.NOT) {
+        return;
+      }//end if
+
+    }//end for
+
+    printf("MISSED!%n");
+
+    move_wumpus();
+
+    if (--arrows <= 0) {
+      finished = Finish.LOSE;
+    }//end if
+
+  }//end shoot
+
+  static void move() {
+
+    int scratchloc = -1;
+
+    while (scratchloc == -1) {
+
+      scratchloc = getnum("WHERE TO") - 1;
+
+      if (scratchloc < 0 || scratchloc > 19) {
+        scratchloc = -1;
+        continue;
+      }//end if
+
+      if ((cave[loc[YOU]][0] != scratchloc)
+              & (cave[loc[YOU]][1] != scratchloc)
+              & (cave[loc[YOU]][2] != scratchloc)
+              & (loc[YOU] != scratchloc)) {
+
+        printf("NOT POSSIBLE%n");
+        scratchloc = -1;
+
+      }//end if
+
+    }//end while
+
+    loc[YOU] = scratchloc;
+
+    while ((scratchloc == loc[BATS1]) || (scratchloc == loc[BATS2])) {
+      printf("ZAP--SUPER BAT SNATCH! ELSEWHEREVILLE FOR YOU!%n");
+      scratchloc = loc[YOU] = rand.nextInt(20);
+    }//end while
+
+    if (scratchloc == loc[WUMPUS]) {
+      printf("... OOPS! BUMPED A WUMPUS!%n");
+      move_wumpus();
+    }//end if
+
+    if (scratchloc == loc[PIT1] || scratchloc == loc[PIT2]) {
+      printf("YYYYIIIIEEEE . . . FELL IN PIT%n");
+      finished = Finish.LOSE;
+    }//end if
+
+  }//end move
+
+  static void game_setup() {
+
+    for (int j = 0; j < LOCS; j++) {
+
+      loc[j] = -1;
+      while (loc[j] < 0) {
+
+        loc[j] = rand.nextInt(20);
+
+        for (int k = 0; k < j - 1; k++) {
+          if (loc[j] == loc[k]) {
+            loc[j] = -1;
+          }//end if
+
+        }//end for
+
+      }//end while
+
+    }//end for
+
+  }//end game_setup
+
+  static void game_play() {
+
+    arrows = 5;
+
+    printf("HUNT THE WUMPUS%n");
+
+    if (debug) {
+      printf("Wumpus is at %d, pits at %d & %d, bats at %d & %d%n",
+              loc[WUMPUS] + 1,
+              loc[PIT1] + 1, loc[PIT2] + 1,
+              loc[BATS1] + 1, loc[BATS2] + 1);
+    }//end if
+
+    finished = Finish.NOT;
+
+    while (finished == Finish.NOT) {
+
+      show_room();
+
+      if (move_or_shoot()) {
+        shoot();
+      } else {
+        move();
+      }//end if
+
+    }//end while
+
+    if (finished == Finish.WIN) {
+      printf("HEE HEE HEE - THE WUMPUS'LL GET YOU NEXT TIME!!%n");
+    }//end if
+
+    if (finished == Finish.LOSE) {
+      printf("HA HA HA - YOU LOSE!%n");
+    }//end if
+
+    int c = getlet("NEW GAME (Y-N)");
+
+    if (c == 'N') {
+      exit(0);
+    }//end if
+
+  }//end game_play
+
+  static void handle_params(final String argv[]) {
+
+    for (int x = 0; x < argv.length; x++) {
+
+      String chr = argv[x];
+
+      switch (chr) {
+
+        case "-s":
+          rand = new Random(Long.parseLong(argv[x + 1]));
+          break;
+
+        case "-d":
+          debug = true;
+          break;
+
+        case "-h":
+        default:
+          printf("Usage: ./Wumpus [-h] [-d] [-s seed]%n");
+          exit(1);
+
+      }//end switch
+
+    }//end for
+
+  }//end handle_params
+
+  begin {
+
+    rand = new Random(currentTimeMillis());
+
+    handle_params(getArgs());
+
+    int c = getlet("INSTRUCTIONS (Y-N)");
+
+    if (c == 'Y') {
+      print_instructions();
+    }//end if
+
+    do {
+
+      game_setup();
+      game_play();
+
+    } while (getlet("NEW GAME (Y-N)") != 'N');
+
+    exit(0);
+
+  }//end begin
+
+}//end prog Wumpus

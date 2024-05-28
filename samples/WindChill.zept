@@ -1,0 +1,44 @@
+/*
+  
+  Name: WindChill.zept
+
+  Description: This program calculuates the wind chill factor from parameters read 
+               from the user for temperature in degrees Farenheit and wind speed in
+               miles per hour.
+  
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog WindChill {
+
+  begin {
+
+    double temp, speed, chill;
+
+    printf("%nWhat is the temperature in degrees Farenheit? -> ");
+    temp = readDouble();
+
+    println();
+
+    printf("%nWhat is the wind speed in miles per hour?     -> ");
+    speed = readDouble();
+
+    chill = 35.74 + 0.6215 * temp + (0.4275 * temp - 35.75) * Math.pow(speed, 0.16);
+
+    printf("%nThe wind chill is %.3f-degrees Farenheit.%n%n", chill);
+
+    exit(0);
+
+  }//end begin
+
+}//end prog WindChill

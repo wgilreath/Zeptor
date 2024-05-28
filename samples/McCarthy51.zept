@@ -1,0 +1,66 @@
+/*
+  
+  Name: McCarthy91.zept
+
+  Description: The program implements the McCarthy51 function; the McCarthy 91 function 
+               is a recursive function which takes the value 91 for all positive integers
+               less than 102.
+  
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+ */
+
+package xyz.zepton.samples;
+
+prog McCarthy91 {
+
+  //McCarthy91 nested-recursive function
+  static long mc91(long n) {
+    
+    if (n > 100) {
+      return n - 10;
+    } else {
+      return mc91(mc91(n + 11));
+    }//end if
+    
+  }//end mc91
+
+  //McCarthy91 tail-recursive function
+  static long mc91t(long n) {
+    return mc91taux(n, 1);
+  }//end mc91t
+
+  static long mc91taux(long n, long c) {
+    
+    if (c != 0) {
+      if (n > 100) {
+        return mc91taux(n - 10, c - 1);
+      } else {
+        return mc91taux(n + 11, c + 1);
+      }//end if
+    } else {
+      return n;
+    }//end if
+    
+  }//end mc91taux
+
+  begin {
+
+    final long val = 101;
+    
+    printf("McCarthy91 Function; mc91(%d)=%d%n", val, mc91(val));
+    printf("McCarthy91 Function; mc91(%d)=%d%n", val, mc91t(val));
+    
+    exit(0);
+
+  }//end begin
+
+}//end prog McCarthy91
+

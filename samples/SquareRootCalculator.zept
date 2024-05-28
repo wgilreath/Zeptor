@@ -1,0 +1,70 @@
+/*
+  
+  Name: SquareRootCalculator.zept
+
+  Description: This program calculuates the square root of a real or 64-bit double number
+               using the Newton-Rhapson method. 
+  
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog SquareRootCalculator {
+
+  static final double EPSILON = 1e-6; //square root precision approximate digits
+
+  static double calculateSquareRoot(final double number) {
+
+    double guess = number / 2.0;
+
+    //update guess using Newton-Raphson method
+    while (Math.abs(guess * guess - number) > EPSILON) {
+      guess = (guess + number / guess) / 2;
+    }//end while
+
+    return guess;
+
+  }//end calculateSquareRoot
+
+  begin {
+
+    print("Enter a number for square root of: ");
+
+    try {
+
+      double number = readDouble();
+
+      if (number >= 0) {
+
+        double squareRoot = calculateSquareRoot(number);
+        printf("The square root of %f is: %f%n%n", number, squareRoot);
+        printf("The product of the square root %f is %f%n", squareRoot, (squareRoot * squareRoot));
+
+      } else {
+
+        println("Invalid input for number value. Cannot calculate square root of a negative number!");
+        exit(1);
+
+      }//end if
+
+    } catch (Exception ex) {
+
+      printf("Error: Invalid input, not a number!%n");
+      exit(2);
+
+    }//end try
+
+    exit(0);
+
+  }//end begin
+
+}//end prog SquareRootCalculator

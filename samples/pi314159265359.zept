@@ -1,0 +1,56 @@
+/*
+
+  Name: pi314159265359.zept
+
+  Description: Pi computed by Taylor Series from the Wired magazine article: 
+               "6 Things You Probably Didn't Know About Pi," March 14, 2016, 
+               https://www.wired.com/2016/03/six-things-probably-didnt-know-pi/ 
+               by Rhett Allain. 
+
+               Use a finite limit of an infinite Taylor series to approximate pi, 
+               and compute difference with java Math.PI constant.
+
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog pi314159265359 {
+
+  begin {
+
+    final int LIMIT = 2_000_000_000;
+
+    int n = 1;
+    double pi = 0.0d;
+    int sign = 1;
+
+    while (n < LIMIT) {
+
+      if (n % 2 == 0) {
+        n = n + 1;
+      } else {
+        pi = pi + 4.0d * ((double) sign / (double) n);
+        n = n + 1;
+        sign = sign * -1;
+      }//end if
+
+    }//end while
+
+    printf("%n pi:    %.12f %n", pi);
+    printf("%n error: %.12f %n", Math.PI - pi);
+    println();
+
+    exit(0);
+
+  }//end begin
+
+}//end prog

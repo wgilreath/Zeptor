@@ -1,0 +1,90 @@
+/*
+  
+  Name: RunLengthLimitedCompression.zept
+
+  Description: This program implements the Run Length Limited (RLL) data compression
+               algorithm. 
+  
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog RunLengthLimitedCompression {
+
+  //Define function to compress a string using RLL compression algorithm
+  static String compress(String input, int limit) {
+
+    StringBuilder result = new StringBuilder();
+
+    int count = 1;
+    char prevChar = input.charAt(0);
+
+    for (int i = 1; i < input.length(); i++) {
+
+      char currChar = input.charAt(i);
+
+      if (currChar == prevChar && count < limit) {
+        count++;
+      } else {
+        result.append(count);
+        result.append(prevChar);
+        count = 1;
+        prevChar = currChar;
+      }//end if
+
+    }//end for
+
+    result.append(count);
+    result.append(prevChar);
+
+    return result.toString();
+
+  }//end compress
+
+  //Define function to decompress a string compressed with RLL compression algorithm
+  static String decompress(String input) {
+
+    StringBuilder result = new StringBuilder();
+
+    for (int i = 0; i < input.length(); i += 2) {
+
+      int count = Character.getNumericValue(input.charAt(i));
+      char c = input.charAt(i + 1);
+
+      for (int j = 0; j < count; j++) {
+        result.append(c);
+      }//end for
+
+    }//end for
+
+    return result.toString();
+
+  }//end decompress
+
+  begin {
+
+    String textString = "AAAABBBCDDDDDEFFFFGGGGGHHH";
+
+    final int limit = 5; //run length limit is 5-chars
+
+    String compressed = compress(textString, limit);
+    String decompressed = decompress(compressed);
+
+    println("Original Text string: " + textString);
+    println("Compressed    string: " + compressed);
+    println("Decompressed  string: " + decompressed);
+
+    exit(0);
+
+  }//end begin
+
+}//end prog RunLengthLimitedCompression

@@ -1,0 +1,121 @@
+/*
+  
+  Name: KnightsTour.zept
+
+  Description: The program solves the Knight's Tour problem for NxN chess board, 
+               have the knight move so that from a starting point, the knight will
+               only visit each square only once. 
+
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+*/  
+ 
+package xyz.zepton.samples;
+
+prog KnightsTour {
+
+  static final int N = 8; //chessboard size 8x8 grid
+
+  // A utility function to check if i,j are valid indexes for NxN chessboard
+  static boolean isSafe(int x, int y, int sol[][]) {
+    return (x >= 0 && x < N && y >= 0 && y < N
+            && sol[x][y] == -1);
+  }//end isSafe
+
+  // A utility function to print solution matrix sol[N][N] 
+  static void printSolution(int sol[][]) {
+    
+    println();
+    println("-----------------------------------------");
+    
+    for (int x = 0; x < N; x++) {
+      print("| ");
+      for (int y = 0; y < N; y++) {
+        printf("%02d | ", sol[x][y]);
+      }//end for
+      println();
+    }//end for
+    println("-----------------------------------------");
+    println();
+    
+  }//end printSolution
+
+  /* This function solves the Knight Tour problem
+	using Backtracking. This function mainly
+	uses solveKTUtil() to solve the problem. It
+	returns false if no complete tour is possible,
+	otherwise return true and prints the tour.
+	Please note that there may be more than one
+	solutions, this function prints one of the
+	feasible solutions. */
+
+  static boolean solveKT() {
+
+    int sol[][] = new int[N][N];
+
+    // Initialization of solution matrix 
+    for (int x = 0; x < N; x++) {
+      for (int y = 0; y < N; y++) {
+        sol[x][y] = -1;
+      }//end for
+    }//end for
+
+    // xMove[] and yMove[] define next move of Knight.
+		// xMove[] is for next value of x coordinate
+		// yMove[] is for next value of y coordinate 
+    int xMove[] = {2, 1, -1, -2, -2, -1, 1, 2};
+    int yMove[] = {1, 2, 2, 1, -1, -2, -2, -1};
+
+    // Since the Knight is initially at the first block
+    sol[0][0] = 0;
+
+    // Start from 0,0 and explore all tours using solveKTUtil() 
+    if (!solveKTUtil(0, 0, 1, sol, xMove, yMove)) {
+      println("Solution does not exist");
+      return false;
+    } else {
+      printSolution(sol);
+    }//end if
+
+    return true;
+
+  }//end solveKT
+
+  // A recursive utility function to solve Knights Tour problem 
+  static boolean solveKTUtil(int x, int y, int movei, int sol[][], int xMove[], int yMove[]) {
+
+    int k, next_x, next_y;
+    if (movei == N * N) {
+      return true;
+    }//end if
+
+    // Try all next moves from the current coordinate x, y 
+    for (k = 0; k < 8; k++) {
+      next_x = x + xMove[k];
+      next_y = y + yMove[k];
+      if (isSafe(next_x, next_y, sol)) {
+        sol[next_x][next_y] = movei;
+        if (solveKTUtil(next_x, next_y, movei + 1, sol, xMove, yMove)) {
+          return true;
+        } else {
+          sol[next_x][next_y] = -1; // backtracking
+        }//end if
+      }//end if
+    }//end for
+
+    return false;
+    
+  }//end solveKTUtil
+
+  begin {
+    solveKT();
+    exit(0);
+  }//end begin
+
+}//end prog KnightsTour

@@ -1,0 +1,62 @@
+/*
+  
+  Name: QOTD.zept
+
+  Description: The program implements a quote of the day (QOTD) program that does an 
+               http connection to remote server to get JSON formatted quote and author,
+               that is extracted with some string operations.
+  
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog QOTD {
+
+  begin {
+
+    String qotd = EMPTY_STRING;
+    final String qURL = "https://zenquotes.io/?api=random";
+
+    try {
+
+      //rewrite using URL library, stream library built-in??
+      URL url = new URL(qURL);
+      HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+      connection.setRequestProperty("accept", "application/json");
+
+      InputStream rs = connection.getInputStream();
+
+      BufferedReader br = new BufferedReader(new InputStreamReader(rs));
+
+      qotd = br.readLine();
+
+    } catch (Exception ex) {
+      printf("%nError: %s%n%n", ex.getMessage());
+      ex.printStackTrace();
+      exit(1);
+    }//end catch
+
+    String[] qotd_split = qotd.split(":");
+
+    String qotd_text[] = qotd_split[1].replace('"', ' ').split("[.]");
+    String qotd_whom[] = qotd_split[2].split(",");
+
+    printf("%n%n");
+    printf("Quote: \"%s.\"", qotd_text[0].trim());
+    printf(" --%s%n%n", qotd_whom[0].replace('"', ' '));
+
+    exit(0);
+
+  }//end begin
+
+}//end prog QOTD

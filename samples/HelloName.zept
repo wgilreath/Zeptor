@@ -1,0 +1,40 @@
+/*
+
+  Name: HelloName.zept
+
+  Description: Read the name of the user and say hello back to them.
+
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog HelloName {
+
+  begin {
+
+     println();
+     print("Hello, what is your name? ->");
+
+     String name = readLine();
+   
+     println();
+   
+     printf("Hello: %s, a pleasure to meet you!%n", name);
+     println();
+   
+     nop();
+   
+     exit(0);
+   
+  }//end begin 
+  
+}//end helloName

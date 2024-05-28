@@ -1,0 +1,70 @@
+/*
+
+  Name: PascalsTriangle.zept
+
+  Description: This ZeptoN program computes and prints Pascal's Triangle. 
+               More about Pascal's Triangle here:
+               https://en.wikipedia.org/wiki/Pascal's_triangle
+
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog PascalsTriangle {
+
+  //Factorial function n! = n* n-1* n-2 ... * 2 * 1
+  static int factorial(int n) {
+
+    int f;
+
+    //compute factorial iteratively rather than recursively
+    for (f = 1; n > 1; n--) {
+      f *= n;
+    }//end for
+
+    return f;
+
+  }//end factorial
+
+  //Combinations Calculator (nCr) n choose r
+  static int nCr(final int n, final int r) {
+    return factorial(n) / (factorial(n - r) * factorial(r));
+  }//end nCr
+
+  begin {
+
+    println();
+    printf("Pascal's Triangle:  %n%n");
+
+    final int n = 12; //n > 12 get integer overflow
+
+    for (int i = 0; i <= n; i++) {
+      println();
+
+      for (int j = 0; j <= n - i; j++) {
+        print(" ");
+      }//end for
+
+      for (int j = 0; j <= i; j++) {
+        printf(" %d", nCr(i, j));
+      }//end for
+
+      println();
+    }//end for
+
+    println();
+
+    exit(0);
+
+  }//end begin
+
+}//end prog PascalsTriangle

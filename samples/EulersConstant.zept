@@ -1,0 +1,76 @@
+/*
+  
+  Name: EulersConstant.zept
+
+  Description: The program calculates m-digits using n-terms summed together to 
+               compute e = 2.71... Euler's Constant with recursive factorial. The 
+               BigDecimal number is used for m-digit precision.
+
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog EulersConstant {
+
+  //version using double, long 
+  static double exp(int n, double x) {
+        // initialize sum of series
+        double sum = 1.0;
+
+        for (int i = n - 1; i > 0; --i) {
+            sum = 1 + x * sum / i; //replace x with 1.0
+        }
+
+        return sum;
+  }//end exp
+
+   static BigDecimal factorial(BigDecimal n) {
+
+        if (n.equals(BigDecimal.ZERO)) {
+            return BigDecimal.ONE;
+        } else {
+            return n.multiply(factorial(n.subtract(BigDecimal.ONE)));
+        }
+
+   }//end factorial
+
+   final static int LASTITER = 100;//cycles max_i 0! ...to compute e^x number of individual terms i
+
+   begin {
+
+        int n = 100;
+        double x = 1.0; //e^1 = 2.71
+        printf("%ne^x = %,.15f%n", exp(n, x)); //e^x
+
+        //CLI m-digits significant
+        //    n-terms in summation
+        
+        //100-significant digits
+        MathContext mc = new MathContext(100, RoundingMode.HALF_UP);
+        
+        BigDecimal result = BigDecimal.ZERO;
+        
+        for (int i = 0; i < LASTITER; i++) {
+            
+            BigDecimal factorial = factorial(new BigDecimal(i));   //i!
+            
+            BigDecimal res = BigDecimal.ONE.divide(factorial, mc); //1/i!  e^x, n-terms x = BigDecimal.ONE
+     
+            result = result.add(res); //sum 1/0! + 1/1! + 1/2! + 1/3! + ... 1/(n-1)! + 1/n!
+        }
+        
+        println(result);
+
+    exit(0);
+
+  }//end begin
+}//end prog EulersConstant

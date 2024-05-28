@@ -1,0 +1,51 @@
+/*
+
+  Name: ConvertFarenToCelsius.zept
+
+  Description: The ConvertFarenToCelsius ZeptoN program converts temperature 
+               value from Farenheit to Celsius--from a range of freezing to 
+               boiling.
+
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog ConvertFarenToCelsius {
+
+  begin {
+
+    final double RATIO = 5.0d/9.0d;
+
+    int tempCelsius = 0;
+
+    println("Fahrenheit           Celsius");
+    println("--------------------------------------");
+    
+    
+    //iterate from 32-degrees Fahrenheit--freezing to
+    //  212-degrees Fahrenheit--boiling.
+    for(int tempFahren = 32; tempFahren <= 212; tempFahren++){
+
+      tempCelsius = (int) (RATIO * ((double) (tempFahren - 32) ) );
+
+      printf("%3d-degrees Fahren %3d-degrees Celsius%n", tempFahren, tempCelsius);
+
+    }//end for
+
+    println();
+    exit(0);
+  
+  }//end begin
+  
+}//end prog ConvertFarenToCelsius
+
+

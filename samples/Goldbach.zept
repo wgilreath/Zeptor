@@ -1,0 +1,66 @@
+/*
+  
+  Name: Goldbach.zept
+
+  Description: The program takes a number or series of numbers and determines if there
+               is a sum of two primes (the Goldbach Conjecture) for the number. 
+  
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+ */
+
+package xyz.zepton.samples;
+
+prog Goldbach {
+
+  //x will start at 3 and increment by 2 each time, 
+  //y will start at i-3 and decrement by 2 each time until we find two primes
+  static boolean find(int x, int y) {
+    if (x > y) {
+      return false; // if x > y we haven't found such a pair, we have proven Goldbach's theorem as false!
+    } else if (isPrime(x, 2) && isPrime(y, 2)) { // otherwise if x and y are both primes, output this pair and return true
+
+      println((x + y) + " = " + x + " + " + y);
+      return true;
+    } else {
+      return find(x + 2, y - 2); // otherwise recursively search
+    }//end if
+  }//end find
+
+  // recursive prime method - determine if x is prime starting with divisor y
+  static boolean isPrime(int x, int y) {
+
+    if (y > x / 2) {
+      return true;            // if y > x/2 we have tested from 2..x/2 and haven't found a divisor and therefore these is none other than 1 and x, so x is prime
+    } else if (x % y == 0) {
+      return false;        // otherwise if y divides into x evenly, then y is a divisor and so x is not prime
+    } else {
+      return isPrime(x, y + 1);          // otherwise continue to recurse trying y+1 as a divisor
+    }//end if
+  }//end isPrime
+
+  begin {
+
+    int i = 46;  //use getArg, or readInt ??
+
+    boolean temp = true;
+
+    temp = find(3, i - 3);     // our prime numbers will all be odd, so we start at i=3 and see if i-3 is also prime, 
+    
+    // if not, we try the next pair at i+2 and i-3-2
+    if (!temp) {
+      println(i + " is not a Goldbach number");  // if we find such a pair, output it
+    }//end if  
+
+    exit(0);
+
+  }//end begin
+
+}//end prog Goldbach

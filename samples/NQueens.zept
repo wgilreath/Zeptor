@@ -1,0 +1,87 @@
+/*
+
+  Name: NQueens.zept
+
+  Description: The N-queens problem; place N-queens on 8x8 chess board so that they
+               cannot attack each other. 
+  
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.zepton.samples;
+
+prog NQueens {
+
+  static int[] b = new int[8];
+  static int s = 0;
+
+  static boolean unsafe(int y) {
+
+    int x = b[y];
+
+    for (int i = 1; i <= y; i++) {
+
+      int t = b[y - i];
+      if (t == x || t == x - i || t == x + i) {
+        return true;
+      }//end if
+
+    }//end for
+
+    return false;
+
+  }//end unsame
+
+  static void putboard() {
+
+    printf("%n%nSolution %d%n", (++s));
+
+    for (int y = 0; y < 8; y++) {
+
+      for (int x = 0; x < 8; x++) {
+        print((b[y] == x) ? "|Q" : "|_");
+      }//end for
+
+      println("|");
+
+    }//end for
+
+  }//end putboard
+
+  begin {
+
+    int y = 0;
+    b[0] = -1;
+
+    while (y >= 0) {
+
+      do {
+        b[y]++;
+      } while ((b[y] < 8) && unsafe(y));
+
+      if (b[y] < 8) {
+        if (y < 7) {
+          b[++y] = -1;
+        } else {
+          putboard();
+          printf("%n%n");
+        }//end if
+      } else {
+        y--;
+      }//end if
+
+    }//end while
+
+    exit(0);
+
+  }//end begin
+
+}//end prog NQueens
