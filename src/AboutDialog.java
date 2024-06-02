@@ -15,6 +15,7 @@
  * link:  https://www.gnu.org/licenses/gpl-3.0.txt.
  *
  */
+
 package xyz.zepton.zeptor.gui;
 
 import javax.swing.*;
@@ -24,10 +25,10 @@ import java.awt.*;
 public class AboutDialog extends JFrame {
 
     private final static String RELEASE_DATA   = "3.2.2";
-    private final static String VERSION_DATA   = "4.15";
-    private final static String COPYRIGHT_DATA = "May 2024";
+    private final static String VERSION_DATA   = "4.16";
+    private final static String COPYRIGHT_DATA = "June 2024";
 
-    private final static String TEXTAREA_TITLE     = "About Zeptor";
+    private final static String TEXTAREA_TITLE     = "";
     private final static int    TEXTAREA_COLUMNS   = 55;
     private final static int    TEXTAREA_FONT_SIZE = 15;
     private final static String TEXTAREA_FONT_NAME = "Monospaced";
@@ -51,7 +52,7 @@ public class AboutDialog extends JFrame {
 
     public AboutDialog() {
 
-        this.jframe = new JFrame("About Zeptor");
+        this.jframe = new JFrame("");
 
         textArea.setColumns(AboutDialog.TEXTAREA_COLUMNS);
         textArea.setLineWrap(false);
@@ -88,7 +89,7 @@ public class AboutDialog extends JFrame {
     public void setVisible(final boolean isVisible) {
         if (isVisible) {
             JOptionPane.showMessageDialog(this.jframe, this.textArea, AboutDialog.TEXTAREA_TITLE, JOptionPane.PLAIN_MESSAGE, null);
-        }
+        }//end if
 
     }//end setVisible
 
