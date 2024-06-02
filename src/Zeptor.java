@@ -15,6 +15,7 @@
  * link:  https://www.gnu.org/licenses/gpl-3.0.txt.
  *
  */
+
 package xyz.zepton.zeptor.editor;
 
 import java.awt.Desktop;
@@ -1636,7 +1637,7 @@ public final class Zeptor extends MyJFrame implements OpenFileListener, Containe
     private void fileNew() {
 
         numNewFiles++;
-        String title = "myProgram.zep";
+        String title = "myProgram.zept";
         MyTextPane textPane = new MyTextPane(this, null, numNewFiles);
 
         textPane.setTitle(title);
@@ -1657,20 +1658,33 @@ public final class Zeptor extends MyJFrame implements OpenFileListener, Containe
     public static final String USER = System.getProperty("user.name");
 
     private static final String DEFAULT_ZEPTON_HEADER
-            = "/**      " + EOLN
-            + " *       " + EOLN
-            + " * Name: myProgram.zep" + EOLN
-            + " * Date: " + LocalDate.now() + EOLN
-            + " *" + EOLN
-            + " * Description: Simple ZeptoN program that prints \"Hello, World!!!\"" + EOLN
-            + " *       " + EOLN
-            + " */      " + EOLN
-            + "         " + EOLN
-            + "";
+            = "/*" 
+            + EOLN
+            + "  " 
+            + EOLN
+            + "  Name: myProgram.zept" 
+            + EOLN
+            + "  " 
+            + EOLN
+            + "  Description: ZeptoN program that prints \"Hello, World!!!\"" 
+            + EOLN
+            + "  " 
+            + EOLN
+            + "  Copyright © " + LocalDate.now().getYear() 
+            + EOLN
+            + "  " 
+            + EOLN
+            + "*/" 
+            + EOLN
+            + "  " 
+            + EOLN
+            ;
 
     private static final String DEFAULT_ZEPTON_PROGRAM
-            = "package zepton.program." + USER
-            + ";" + EOLN
+            = "package zepton.program." 
+            + USER
+            + ";" 
+            + EOLN
             + EOLN
             + "prog myProgram {"
             + EOLN
@@ -1685,9 +1699,11 @@ public final class Zeptor extends MyJFrame implements OpenFileListener, Containe
             + "    exit(0);"
             + EOLN
             + EOLN
-            + "  }//end begin" + EOLN
-            + "}//end prog myProgram" + EOLN
-            + EOLN;
+            + "  }//end begin" 
+            + EOLN
+            + EOLN
+            + "}//end prog myProgram"
+            ;
 
     /**
      * check if file had already been opened and show it if it exist
