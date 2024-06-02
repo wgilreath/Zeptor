@@ -1,0 +1,60 @@
+/*
+  
+  Name: WeekDay.zept
+
+  Description: This program implements the "day of week" function that takes the date
+               and calculates the day of the week from 0...6 for that date. 
+  
+  Author: William F. Gilreath (will@zepton.xyz)
+
+  Copyright © 2024 William F. Gilreath. All Rights Reserved.
+
+  License: This software is subject to the terms of the GNU General Public License (GPL)
+  version 3.0 available at the following link: http://www.gnu.org/copyleft/gpl.html.
+  You must accept the terms of the GNU General Public License (GPL) license agreement
+  to use this software.
+  
+*/
+
+package xyz.samples.zepton;
+
+prog WeekDay {
+
+  //define immutable constant table of index from 0...6 to textual name of day of the week
+  static final String[] DAY_OF_WEEK = new String[]{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+
+  //standard date form: month-day-year calls actual day of week function                                           
+  static int weekday_MM_DD_YYYY(final int month, final int day, final int year) {
+
+    return weekday_YYYY_MM_DD(year, month, day);
+
+  }//end weekday_MM_DD_YYYY                         
+
+  //invariant week day function                                                         
+  static int weekday_YYYY_MM_DD(int year, int month, int day) {
+
+    //magic month table Jan=0, Feb=3, ... , Nov=2, Dec=4
+    final int[] monthTable = {0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4};
+
+    year = year - ((month < 3) ? 1 : 0); //subtract from year based upon magic month value
+
+    //calculate day of week using equation and return
+    return ((year + year / 4 - year / 100 + year / 400 + monthTable[month - 1] + day) % 7);
+
+  }//end weekday_YYYY_MM_DD
+
+  begin {
+
+    int day = me.weekday_YYYY_MM_DD(1971, 7, 9); //author's birthday ;-)
+
+    printf("Day of week for  7-9-1971: %d %s %n", day, me.DAY_OF_WEEK[day]);
+
+    int may_day = me.weekday_MM_DD_YYYY(5, 29, 2024); //date program written
+
+    printf("Day of week for 5-29-2024: %d %s %n", may_day, me.DAY_OF_WEEK[may_day]);
+
+    exit(0);
+
+  }//end begin
+
+}//end prog WeekDay
