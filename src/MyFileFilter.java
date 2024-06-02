@@ -15,6 +15,7 @@
  * link:  https://www.gnu.org/licenses/gpl-3.0.txt.
  *
  */
+
 package xyz.zepton.zeptor.gui;
 
 import java.io.File;
@@ -94,34 +95,6 @@ public class MyFileFilter extends FileFilter {
         return false;
 
     }//end accept
-
-    /**
-     * @return true if ext exists in the list of extension
-     */
-//    private boolean exist(String ext) {
-//        for (int i = 0; i < extensions.size(); i++) {
-//            String s = extensions.get(i);
-//            if (s.equalsIgnoreCase(ext))
-//            {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-
-    /**
-     * @return the extension of file f
-     * @param f the file the extension to get
-     */
-    public String getExtension(File f) {
-
-        String[] str = f.getName().split("\\.");
-
-        System.out.printf("getExtension: %s%n", str[str.length - 1]);
-
-        return str[str.length - 1];
-
-    }
 
     /**
      * Description
